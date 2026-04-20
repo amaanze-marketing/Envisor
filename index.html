@@ -1,1349 +1,1130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Envisor Consulting — SEO Audit Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tarang — STT/TTS Built for Indian Realities | Ori</title>
+<meta name="description" content="STT/TTS tuned for Indian languages, dialects, and telephony audio. Live at Vodafone Idea and other enterprises. 9 STT + 22 TTS languages. Try the playground." />
+<meta property="og:title" content="STT/TTS built for Indian realities." />
+<meta property="og:description" content="8 kHz phone lines. Regional accents. Code-switched speech. Tarang is the speech engine your voicebot needs to survive real calls." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          heading: ['"Be Vietnam Pro"', 'sans-serif'],
+          body: ['Roboto', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+        colors: {
+          brand: {
+            50: '#ECFDF5',
+            100: '#D1FAE5',
+            200: '#A7F3D0',
+            300: '#6EE7B7',
+            400: '#34D399',
+            500: '#10B981',
+            600: '#059669',
+            700: '#047857',
+            800: '#065F46',
+            900: '#064E3B',
+            ori: '#4CAF50',
+          },
+          ink: {
+            950: '#0B0F1A',
+            900: '#0F172A',
+            800: '#1E293B',
+            700: '#334155',
+            600: '#475569',
+          },
+          sky: {
+            300: '#67E8F9',
+            400: '#22D3EE',
+            500: '#06B6D4',
+            600: '#0891B2',
+            700: '#0E7490',
+          },
+          coral: {
+            300: '#FDA4AF',
+            400: '#FB7185',
+            500: '#F43F5E',
+            600: '#E11D48',
+          },
+          sun: {
+            300: '#FCD34D',
+            400: '#FBBF24',
+            500: '#F59E0B',
+            600: '#D97706',
+          },
+        },
+        boxShadow: {
+          glow: '0 0 60px rgba(16,185,129,0.25)',
+          card: '0 10px 30px -10px rgba(2,6,23,0.25)',
+        },
+      }
+    }
+  }
+</script>
+
 <style>
-  :root {
-    --bg: #0f1117;
-    --surface: #1a1d27;
-    --surface2: #22263a;
-    --border: #2e3347;
-    --text: #e8eaf6;
-    --muted: #8b91b0;
-    --accent: #6c8efb;
-    --accent2: #a78bfa;
-    --red: #f87171;
-    --orange: #fb923c;
-    --yellow: #fbbf24;
-    --green: #34d399;
-    --blue: #60a5fa;
-    --red-bg: rgba(248,113,113,0.12);
-    --orange-bg: rgba(251,146,60,0.12);
-    --yellow-bg: rgba(251,191,36,0.12);
-    --green-bg: rgba(52,211,153,0.12);
-    --blue-bg: rgba(96,165,250,0.12);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Roboto', sans-serif; -webkit-font-smoothing: antialiased; }
+  h1,h2,h3,h4,h5 { font-family: 'Be Vietnam Pro', sans-serif; }
 
-  /* Layout */
-  .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-  .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
-  .col-span-2 { grid-column: span 2; }
-  .col-span-3 { grid-column: span 3; }
-
-  /* Header */
-  .header { background: linear-gradient(135deg, #1a1d27 0%, #22263a 100%); border: 1px solid var(--border); border-radius: 16px; padding: 32px; margin-bottom: 24px; position: relative; overflow: hidden; }
-  .header::before { content: ''; position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(108,142,251,0.15) 0%, transparent 70%); border-radius: 50%; }
-  .header-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; }
-  .header h1 { font-size: 26px; font-weight: 700; color: #fff; }
-  .header h1 span { color: var(--accent); }
-  .header-meta { color: var(--muted); font-size: 13px; margin-top: 6px; }
-  .header-meta a { color: var(--accent); text-decoration: none; }
-  .overall-score { text-align: center; }
-  .score-ring { width: 100px; height: 100px; position: relative; margin: 0 auto; }
-  .score-ring svg { transform: rotate(-90deg); }
-  .score-ring .track { fill: none; stroke: var(--border); stroke-width: 8; }
-  .score-ring .fill { fill: none; stroke: var(--orange); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 283; stroke-dashoffset: 141; transition: stroke-dashoffset 1s ease; }
-  .score-ring .num { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 22px; font-weight: 800; color: var(--orange); }
-  .score-label { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
-
-  /* Tabs */
-  .tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 4px; margin-bottom: 20px; flex-wrap: wrap; }
-  .tab { padding: 8px 18px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--muted); transition: all 0.2s; border: none; background: none; }
-  .tab.active { background: var(--accent); color: #fff; }
-  .tab:hover:not(.active) { background: var(--surface2); color: var(--text); }
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-
-  /* Cards */
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
-  .card-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
-  .card-title .dot { width: 8px; height: 8px; border-radius: 50%; }
-
-  /* Metric Cards */
-  .metric { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
-  .metric-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-  .metric-val { font-size: 28px; font-weight: 800; color: #fff; }
-  .metric-sub { font-size: 12px; margin-top: 4px; }
-  .metric-badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-top: 8px; }
-  .bad { background: var(--red-bg); color: var(--red); }
-  .warn { background: var(--yellow-bg); color: var(--yellow); }
-  .ok { background: var(--green-bg); color: var(--green); }
-  .info { background: var(--blue-bg); color: var(--blue); }
-
-  /* Score bar */
-  .score-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-  .score-row:last-child { margin-bottom: 0; }
-  .score-name { font-size: 13px; min-width: 160px; }
-  .score-bar-wrap { flex: 1; background: var(--surface2); border-radius: 20px; height: 8px; overflow: hidden; }
-  .score-bar { height: 100%; border-radius: 20px; transition: width 1s ease; }
-  .score-num { font-size: 13px; font-weight: 700; min-width: 36px; text-align: right; }
-  .bar-red { background: linear-gradient(90deg, #f87171, #ef4444); }
-  .bar-orange { background: linear-gradient(90deg, #fb923c, #f97316); }
-  .bar-yellow { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
-  .bar-green { background: linear-gradient(90deg, #34d399, #10b981); }
-
-  /* Priority list */
-  .priority-list { list-style: none; }
-  .priority-item { display: flex; gap: 14px; padding: 14px; border-radius: 10px; margin-bottom: 10px; border: 1px solid transparent; transition: border-color 0.2s; cursor: default; }
-  .priority-item:hover { border-color: var(--border); }
-  .priority-item.p1 { background: var(--red-bg); }
-  .priority-item.p2 { background: var(--orange-bg); }
-  .priority-item.p3 { background: var(--green-bg); }
-  .priority-badge { flex-shrink: 0; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
-  .p1 .priority-badge { background: var(--red); color: #fff; }
-  .p2 .priority-badge { background: var(--orange); color: #fff; }
-  .p3 .priority-badge { background: var(--green); color: #1a1d27; }
-  .priority-content h4 { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
-  .priority-content p { font-size: 12px; color: var(--muted); line-height: 1.5; }
-  .priority-content .impact { font-size: 11px; font-weight: 600; margin-top: 5px; }
-  .p1 .impact { color: var(--red); }
-  .p2 .impact { color: var(--orange); }
-  .p3 .impact { color: var(--green); }
-
-  /* Table */
-  table { width: 100%; border-collapse: collapse; }
-  th { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.7px; padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
-  td { padding: 10px 12px; border-bottom: 1px solid rgba(46,51,71,0.5); font-size: 13px; }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: var(--surface2); }
-  .ctr-bad { color: var(--red); font-weight: 700; }
-  .ctr-ok { color: var(--yellow); font-weight: 700; }
-  .ctr-good { color: var(--green); font-weight: 700; }
-
-  /* Issue checks */
-  .check-list { list-style: none; }
-  .check-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
-  .check-item:last-child { border-bottom: none; }
-  .check-icon { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; margin-top: 1px; }
-  .icon-pass { background: var(--green-bg); color: var(--green); }
-  .icon-fail { background: var(--red-bg); color: var(--red); }
-  .icon-warn { background: var(--yellow-bg); color: var(--yellow); }
-  .check-text { flex: 1; }
-  .check-text strong { display: block; margin-bottom: 2px; }
-  .check-text span { color: var(--muted); font-size: 12px; }
-
-  /* Channel bars */
-  .channel-row { margin-bottom: 14px; }
-  .channel-top { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 13px; }
-  .channel-bar-wrap { background: var(--surface2); border-radius: 20px; height: 6px; overflow: hidden; }
-  .channel-bar { height: 100%; border-radius: 20px; }
-
-  /* Fix highlight */
-  .fix-box { background: var(--surface2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 12px 14px; margin-top: 10px; font-size: 12px; color: var(--muted); }
-  .fix-box strong { color: var(--accent); display: block; margin-bottom: 4px; font-size: 12px; }
-
-  /* Opportunity card */
-  .opp-card { background: var(--surface2); border-radius: 10px; padding: 14px; margin-bottom: 10px; }
-  .opp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .opp-url { font-size: 12px; color: var(--accent); font-family: monospace; }
-  .opp-metrics { display: flex; gap: 16px; margin-bottom: 8px; }
-  .opp-metric { font-size: 12px; }
-  .opp-metric-val { font-weight: 700; }
-  .opp-fix { font-size: 12px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); }
-
-  /* Sections */
-  .section-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: #fff; display: flex; align-items: center; gap: 8px; }
-  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); margin-left: 8px; }
-
-  /* Timeline */
-  .timeline { }
-  .timeline-group { margin-bottom: 24px; }
-  .timeline-header { font-size: 13px; font-weight: 700; margin-bottom: 12px; padding: 6px 14px; border-radius: 6px; display: inline-block; }
-  .tg-red { background: var(--red-bg); color: var(--red); }
-  .tg-orange { background: var(--orange-bg); color: var(--orange); }
-  .tg-green { background: var(--green-bg); color: var(--green); }
-  .timeline-items { border-left: 2px solid var(--border); padding-left: 20px; margin-left: 10px; }
-  .timeline-item { position: relative; padding: 12px 0; }
-  .timeline-item::before { content: ''; position: absolute; left: -25px; top: 18px; width: 8px; height: 8px; border-radius: 50%; border: 2px solid var(--border); background: var(--surface); }
-  .ti-red::before { border-color: var(--red); background: var(--red-bg); }
-  .ti-orange::before { border-color: var(--orange); background: var(--orange-bg); }
-  .ti-green::before { border-color: var(--green); background: var(--green-bg); }
-  .timeline-item h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-  .timeline-item p { font-size: 12px; color: var(--muted); }
-
-  /* Scrollable table container */
-  .table-wrap { overflow-x: auto; }
-
-  /* Footer */
-  .footer { text-align: center; padding: 24px; color: var(--muted); font-size: 12px; margin-top: 24px; }
-
-  /* Responsive */
-  @media (max-width: 900px) {
-    .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr 1fr; }
-    .col-span-3 { grid-column: span 2; }
-  }
-  @media (max-width: 600px) {
-    .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; }
-    .col-span-2, .col-span-3 { grid-column: span 1; }
-    .header h1 { font-size: 20px; }
+  /* For use on DARK backgrounds only — light greens on dark ink */
+  .text-gradient {
+    background: linear-gradient(135deg, #34D399 0%, #6EE7B7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
-  /* Tooltip */
-  [data-tip] { position: relative; cursor: help; }
-  [data-tip]:hover::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 11px; white-space: nowrap; z-index: 99; pointer-events: none; }
+  /* For use on LIGHT backgrounds — deeper greens for WCAG AA contrast */
+  .text-gradient-dark {
+    background: linear-gradient(135deg, #047857 0%, #059669 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 
-  /* Bounce animation for score rings */
-  @keyframes countUp { from { stroke-dashoffset: 283; } }
+  .text-spectrum {
+    background: linear-gradient(90deg, #34D399 0%, #22D3EE 45%, #FBBF24 80%, #FB7185 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Spectrum strip divider */
+  .spectrum-strip {
+    background: linear-gradient(90deg, #10B981 0%, #06B6D4 35%, #F59E0B 70%, #F43F5E 100%);
+  }
+
+  /* Hero radial glow */
+  .hero-glow::before {
+    content:''; position:absolute; top:-240px; right:-200px;
+    width:640px; height:640px; pointer-events:none;
+    background: radial-gradient(circle, rgba(16,185,129,0.18) 0%, transparent 70%);
+  }
+  .hero-glow::after {
+    content:''; position:absolute; bottom:-120px; left:-120px;
+    width:440px; height:440px; pointer-events:none;
+    background: radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%);
+  }
+
+  /* Grid pattern background */
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, rgba(148,163,184,0.07) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(148,163,184,0.07) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  /* Waveform animation */
+  @keyframes wave {
+    0%,100% { transform: scaleY(0.3); }
+    50% { transform: scaleY(1); }
+  }
+  .wave-bar { animation: wave 1.2s ease-in-out infinite; transform-origin: center; }
+
+  /* Accordion */
+  details[open] summary .chev { transform: rotate(180deg); }
+  .chev { transition: transform .2s ease; }
+
+  /* Ticker */
+  @keyframes scroll-x {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .ticker-track { animation: scroll-x 40s linear infinite; }
+
+  /* Sub-nav pill */
+  .subnav a:hover { color: #fff; }
+
+  /* Language chip hover */
+  .lang-chip { transition: all .2s ease; }
+  .lang-chip:hover { border-color:#34D399; color:#ECFDF5; background:rgba(16,185,129,0.08); transform: translateY(-1px); }
+
+  /* Custom scrollbar hidden */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 8px; }
+
+  /* Button shine */
+  .btn-primary { position: relative; overflow: hidden; }
+  .btn-primary::after {
+    content:''; position:absolute; inset:0;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.25), transparent);
+    transform: translateX(-100%);
+    transition: transform .6s ease;
+  }
+  .btn-primary:hover::after { transform: translateX(100%); }
+
+  /* Section label underline */
+  .section-label::before {
+    content:''; display:inline-block; width:32px; height:1px;
+    background: currentColor; margin-right: 12px; vertical-align: middle;
+  }
 </style>
 </head>
-<body>
+<body class="bg-white text-ink-800">
 
-<div class="container">
-
-  <!-- Header -->
-  <div class="header">
-    <div class="header-top">
-      <div>
-        <h1>Envisor Consulting — <span>SEO Audit</span></h1>
-        <div class="header-meta">
-          <a href="https://envisorco.com" target="_blank">envisorco.com</a>
-          &nbsp;·&nbsp; Audit Date: March 21, 2026
-          &nbsp;·&nbsp; Data Window: Sep 20, 2025 – Mar 21, 2026
-          &nbsp;·&nbsp; Sources: GA4, Google Search Console, Live Crawl
-        </div>
-      </div>
-      <div class="overall-score">
-        <div class="score-ring">
-          <svg viewBox="0 0 100 100" width="100" height="100">
-            <circle class="track" cx="50" cy="50" r="45"/>
-            <circle class="fill" id="mainRing" cx="50" cy="50" r="45"/>
-          </svg>
-          <div class="num">47</div>
-        </div>
-        <div class="score-label">Overall Score</div>
-      </div>
-    </div>
-
-    <!-- Quick stats -->
-    <div class="grid-5" style="margin-top:20px;">
-      <div class="metric">
-        <div class="metric-label">Search Impressions (6mo)</div>
-        <div class="metric-val">83,258</div>
-        <div class="metric-badge warn">+4.7x growth</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Organic Clicks (6mo)</div>
-        <div class="metric-val">661</div>
-        <div class="metric-badge bad">Only 0.79% CTR</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Avg Search Position</div>
-        <div class="metric-val">13.3</div>
-        <div class="metric-badge warn">Page 2 avg</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Real Monthly Visitors</div>
-        <div class="metric-val">~450</div>
-        <div class="metric-badge bad">76% bot traffic</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Indexed Pages</div>
-        <div class="metric-val">58</div>
-        <div class="metric-badge ok">Clean crawl</div>
-      </div>
+<!-- ============ TOP NAV ============ -->
+<header class="fixed top-0 inset-x-0 z-50 bg-ink-900/80 backdrop-blur-md border-b border-white/5">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-2 text-white font-heading font-bold tracking-tight text-lg">
+      <span class="inline-flex w-7 h-7 rounded-md bg-brand-500 items-center justify-center text-ink-900 font-extrabold">O</span>
+      <span>Ori</span>
+      <span class="text-slate-400 font-normal ml-1">/ Tarang</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-7 text-sm text-slate-300 subnav">
+      <a href="#product">Product</a>
+      <a href="#languages">Languages</a>
+      <a href="#proof">Proof</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Talk to us</a>
+    </nav>
+    <div class="flex items-center gap-3">
+      <a href="#contact" class="hidden sm:inline-flex text-sm text-slate-300 hover:text-white">Docs →</a>
+      <a href="#playground" class="btn-primary inline-flex items-center gap-2 rounded-lg bg-brand-500 hover:bg-brand-400 text-ink-900 font-semibold text-sm px-4 py-2 transition">
+        Try Playground
+      </a>
     </div>
   </div>
+</header>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tab active" onclick="showTab('overview')">Overview</button>
-    <button class="tab" onclick="showTab('technical')">Technical SEO</button>
-    <button class="tab" onclick="showTab('content')">Content & E-E-A-T</button>
-    <button class="tab" onclick="showTab('ctr')">CTR Opportunities</button>
-    <button class="tab" onclick="showTab('traffic')">Traffic & Analytics</button>
-    <button class="tab" onclick="showTab('schema')">Schema & Structured Data</button>
-    <button class="tab" onclick="showTab('action')">Action Plan</button>
-  </div>
+<!-- ============ HERO ============ -->
+<section class="relative overflow-hidden bg-ink-900 hero-glow pt-16">
+  <div class="absolute inset-0 grid-bg opacity-60 pointer-events-none"></div>
+  <div class="relative max-w-7xl mx-auto px-6 lg:px-10 py-24 lg:py-32 grid lg:grid-cols-12 gap-12 items-center">
 
-  <!-- ========== OVERVIEW TAB ========== -->
-  <div id="tab-overview" class="tab-content active">
+    <div class="lg:col-span-7">
+      <p class="section-label text-brand-400 font-heading text-xs font-semibold uppercase tracking-[0.2em] mb-8">
+        Tarang · Speech AI by Ori
+      </p>
+      <h1 class="font-heading font-extrabold text-white text-5xl sm:text-6xl lg:text-7xl leading-[1.05] tracking-tight mb-7">
+        STT/TTS built for <span class="text-gradient">Indian realities.</span>
+      </h1>
+      <p class="text-slate-300/90 text-lg leading-[1.75] max-w-xl mb-10">
+        8 kHz phone lines. Background noise. Code-switched speech. Bhojpuri, Maithili, Tamil, Telugu — spoken the way your customers actually speak them. Tarang is the speech engine your voicebot needs to survive real calls.
+      </p>
 
-    <div class="grid-2" style="margin-bottom:16px;">
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--accent)"></span>Category Scores</div>
-        <div class="score-row"><span class="score-name">Technical SEO</span><div class="score-bar-wrap"><div class="score-bar bar-yellow" style="width:62%"></div></div><span class="score-num" style="color:var(--yellow)">62</span></div>
-        <div class="score-row"><span class="score-name">Content & E-E-A-T</span><div class="score-bar-wrap"><div class="score-bar bar-red" style="width:38%"></div></div><span class="score-num" style="color:var(--red)">38</span></div>
-        <div class="score-row"><span class="score-name">CTR Performance</span><div class="score-bar-wrap"><div class="score-bar bar-red" style="width:18%"></div></div><span class="score-num" style="color:var(--red)">18</span></div>
-        <div class="score-row"><span class="score-name">Schema Markup</span><div class="score-bar-wrap"><div class="score-bar bar-orange" style="width:50%"></div></div><span class="score-num" style="color:var(--orange)">50</span></div>
-        <div class="score-row"><span class="score-name">Traffic Quality</span><div class="score-bar-wrap"><div class="score-bar bar-red" style="width:24%"></div></div><span class="score-num" style="color:var(--red)">24</span></div>
-        <div class="score-row"><span class="score-name">On-Page Optimization</span><div class="score-bar-wrap"><div class="score-bar bar-orange" style="width:55%"></div></div><span class="score-num" style="color:var(--orange)">55</span></div>
+      <div class="flex flex-wrap items-center gap-4">
+        <a href="#playground" class="btn-primary group inline-flex items-center gap-2 rounded-xl bg-brand-500 hover:bg-brand-400 text-ink-900 font-semibold px-6 py-4 text-base shadow-glow transition">
+          Try the Playground
+          <svg class="w-4 h-4 transition group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#contact" class="inline-flex items-center gap-2 rounded-xl border border-white/15 hover:border-white/30 text-white px-6 py-4 text-base transition">
+          Talk to our team
+        </a>
       </div>
 
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--red)"></span>Critical Findings</div>
-        <ul class="check-list">
-          <li class="check-item">
-            <div class="check-icon icon-fail">✕</div>
-            <div class="check-text"><strong>Author attributed as "developer" site-wide</strong><span>Kills E-E-A-T for all 41 articles. Real author names needed immediately.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-fail">✕</div>
-            <div class="check-text"><strong>0.12% CTR on top page (42,689 impressions)</strong><span>/time-and-materials-vs-fixed-fee/ is your highest-traffic page with catastrophic CTR.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-fail">✕</div>
-            <div class="check-text"><strong>No conversion tracking in GA4</strong><span>form_submit, video_complete, and contact events are not configured as key events.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-fail">✕</div>
-            <div class="check-text"><strong>76% of all traffic is bot/spam</strong><span>China (6,593 users, 1.9% engage) and Singapore (1,986 users, 5% engage) confirmed via GSC mismatch.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-fail">✕</div>
-            <div class="check-text"><strong>FAQ schema missing despite FAQ content</strong><span>"t&m meaning" ranks position 2.7 with 0 clicks. FAQ rich snippet would capture hundreds of clicks instantly.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>Homepage H1 has zero SEO keywords</strong><span>"Envision and Achieve Your Greatest Success" — no landscape, consulting, or business keywords.</span></div>
-          </li>
-        </ul>
+      <div class="mt-12 pt-8 border-t border-white/10 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm text-slate-400">
+        <span class="inline-flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse"></span> Live at Vodafone Idea</span>
+        <span>9 Indian languages + 4 Hindi dialects</span>
+        <span>22 TTS languages</span>
+        <span>~150 ms streaming latency</span>
+        <span>99.9% uptime</span>
       </div>
     </div>
 
-    <div class="grid-3">
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--green)"></span>What's Working</div>
-        <ul class="check-list">
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>Impression volume growing fast</strong><span>4.7x growth Sept→Feb. Google is indexing and showing your content.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>Organic search quality is excellent</strong><span>63.7% engagement rate, 55.6s avg session. Real searchers love the content.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>Clean robots.txt & sitemap index</strong><span>All crawlers allowed. Sitemap index properly structured across 3 sub-sitemaps.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>Schema markup present on all pages</strong><span>WebPage, Organization, BreadcrumbList, WebSite schemas implemented site-wide.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>Strong niche positioning</strong><span>Landscape industry consulting is a specific, authoritative vertical with clear expertise.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>Homepage ranks position 7.5 for branded</strong><span>5.89% CTR on homepage with 5,464 impressions. Branded search is healthy.</span></div>
-          </li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--yellow)"></span>Biggest Opportunity</div>
-        <div style="background: var(--surface2); border-radius: 10px; padding: 16px; margin-bottom: 12px; border-left: 3px solid var(--yellow);">
-          <div style="font-size: 22px; font-weight: 800; color: var(--yellow);">+1,400 clicks</div>
-          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">estimated monthly gain from CTR fixes alone</div>
+    <!-- Hero visual: waveform + live transcription -->
+    <div class="lg:col-span-5">
+      <div class="relative rounded-2xl border border-white/10 bg-ink-800/60 backdrop-blur p-6 shadow-card">
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-2 text-xs text-slate-400 font-mono">
+            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+            <span>LIVE · 8 kHz μ-law · hi-IN</span>
+          </div>
+          <span class="text-xs text-brand-400 font-mono">~150 ms</span>
         </div>
-        <p style="font-size: 13px; color: var(--muted); line-height: 1.7;">Your T&M page has <strong style="color:#fff">42,689 impressions at 0.12% CTR</strong>. The industry average for a position-10 page is 2.5%. That's a gap of 2.38 percentage points. At 83K impressions per 6 months, fixing title tags + adding FAQ schema across your top 10 pages alone could yield <strong style="color: var(--yellow)">1,000–1,600 additional clicks per month</strong> with zero new content.</p>
-        <div class="fix-box" style="margin-top: 12px;">
-          <strong>Single highest-ROI action:</strong>
-          Rewrite the T&M page title to: <em>"Time & Materials vs Fixed Fee Pricing: Complete Guide [2026]"</em> and add FAQ schema markup. Est. impact: +300–600 clicks/month from this page alone.
+
+        <!-- Waveform -->
+        <div class="flex items-center justify-between gap-[3px] h-20 mb-6 px-1">
+          <template id="waves"></template>
+          <script>
+            (function(){
+              const el = document.currentScript.parentElement;
+              const stops = [
+                ['#10B981','#34D399'], // green
+                ['#059669','#34D399'],
+                ['#0891B2','#22D3EE'], // cyan
+                ['#06B6D4','#67E8F9'],
+                ['#F59E0B','#FBBF24'], // amber
+                ['#D97706','#FBBF24'],
+                ['#E11D48','#FB7185'], // coral
+                ['#F43F5E','#FDA4AF'],
+              ];
+              let html = '';
+              const N = 64;
+              for (let i = 0; i < N; i++) {
+                const h = 20 + Math.random()*80;
+                const delay = (i * 0.035).toFixed(2);
+                const t = i / (N-1);
+                const idx = Math.min(stops.length-1, Math.floor(t * stops.length));
+                const [c1,c2] = stops[idx];
+                html += `<span class="wave-bar flex-1 rounded-full" style="height:${h}%; animation-delay:${delay}s; background: linear-gradient(to top, ${c1}, ${c2});"></span>`;
+              }
+              el.insertAdjacentHTML('afterbegin', html);
+            })();
+          </script>
         </div>
-      </div>
 
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--accent2)"></span>Site Health Snapshot</div>
-        <ul class="check-list">
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>robots.txt</strong><span>Clean. All crawlers allowed. Sitemap declared.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>Sitemap Index</strong><span>3 sub-sitemaps (misc, pages, posts). 58 total URLs indexed.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>HTTPS & Security</strong><span>Site serves over HTTPS. No mixed content detected.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>Image Alt Texts</strong><span>Most images missing descriptive alt attributes. Affects accessibility + image SEO.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>Open Graph Tags</strong><span>Not confirmed. Social previews may be missing or auto-generated.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-fail">✕</div>
-            <div class="check-text"><strong>LocalBusiness Schema</strong><span>Missing despite physical address. Alpharetta, GA location not marked up.</span></div>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- ========== TECHNICAL TAB ========== -->
-  <div id="tab-technical" class="tab-content">
-
-    <div class="section-title">Technical SEO — Score: 62/100</div>
-
-    <div class="grid-2" style="margin-bottom:16px;">
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--green)"></span>Crawlability & Indexing</div>
-        <ul class="check-list">
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>robots.txt</strong><span>User-agent: * / Disallow: (empty) — all bots can crawl everything. Sitemap: https://envisorco.com/sitemap.xml declared.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>Sitemap architecture</strong><span>Sitemap index at /sitemap.xml → 3 children: sitemap-misc.xml (2 URLs), page-sitemap.xml (15 pages), post-sitemap.xml (41 posts). Well structured.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>HTTPS</strong><span>Full HTTPS site. Secure connection confirmed.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>Duplicate sitemap declaration</strong><span>robots.txt declares both sitemap.xml AND sitemap.html. The sitemap.html is a user-facing page, not an XML sitemap. Remove from robots.txt.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>Trailing slash consistency</strong><span>GSC shows /time-and-materials-vs-fixed-fee (no slash) as a duplicate. Ensure 301 redirects consolidate all versions to canonical URLs with trailing slashes.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>CMS platform: WordPress</strong><span>Gravity Forms, lazy loading, and schema plugins detected. Ensure WordPress XML sitemap (Yoast/RankMath) is correctly configured and auto-updating.</span></div>
-          </li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--orange)"></span>On-Page Technical Signals</div>
-        <ul class="check-list">
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>Homepage H1: No target keywords</strong><span>"Envision and Achieve Your Greatest Success" — none of the page's target keywords (landscape business consulting, landscaping consultant) appear in the H1.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-fail">✕</div>
-            <div class="check-text"><strong>Image alt texts missing site-wide</strong><span>Homepage: NALP logo (no alt), case study images (no alt). T&M page: featured image "money.jpg" (no alt). About page: team headshots use filenames not names.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>Open Graph meta tags unconfirmed</strong><span>No OG tags detected in initial crawl. Social shares will lack proper title/image preview. Add og:title, og:description, og:image to all pages.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>Canonical tags not confirmed</strong><span>Canonical tags not detected in page source review. Should be self-referencing on all pages to prevent duplicate content.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-fail">✕</div>
-            <div class="check-text"><strong>Author byline: "developer"</strong><span>All articles (41 posts) attribute authorship to "developer" in both visible byline and ScholarlyArticle schema. This is a direct E-E-A-T penalty signal.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>Heading hierarchy</strong><span>Single H1 per page confirmed. Logical H2 → H3 structure on audited pages. No heading hierarchy violations found.</span></div>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--blue)"></span>Page Speed & Core Web Vitals</div>
-        <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">Based on observed signals. Full CWV measurement requires PageSpeed Insights or CrUX data.</p>
-        <ul class="check-list">
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>Lazy loading implemented</strong><span>Background image lazy loading with IntersectionObserver detected — positive signal for LCP.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>Gravity Forms JS loaded</strong><span>Gravity Forms initialization scripts load on non-form pages. Review if form scripts can be conditionally loaded only on pages with forms.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>Homepage engagement: 5.6s avg</strong><span>Very low engagement time for a page with 4,667 views. May indicate slow LCP or unclear UX — not purely a speed issue.</span></div>
-          </li>
-        </ul>
-        <div class="fix-box">
-          <strong>Recommended action:</strong>
-          Run https://pagespeed.web.dev for mobile and desktop. Target LCP &lt;2.5s, CLS &lt;0.1, INP &lt;200ms.
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--accent2)"></span>URL Structure & Architecture</div>
-        <ul class="check-list">
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>Clean URL slugs</strong><span>All post slugs are descriptive and keyword-rich (e.g., /time-and-materials-vs-fixed-fee/, /6-components-of-a-change-management-plan/).</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>Flat URL structure</strong><span>Most content lives at root level. No excessive subdirectory nesting.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>/learn/ subdirectory inconsistency</strong><span>/learn/articles/, /learn/video/, /learn/academy/ use subdirectory. Consider consolidating or ensuring these are properly linked from sitemap and internally.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>Case study pages: limited SEO value</strong><span>/greenscape/, /mulhalls-landscape/, /mullin-landscape/ are in post-sitemap but may be thin content. Verify word count and add testimonial schema.</span></div>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- ========== CONTENT TAB ========== -->
-  <div id="tab-content" class="tab-content">
-
-    <div class="section-title">Content & E-E-A-T — Score: 38/100</div>
-
-    <div class="grid-2" style="margin-bottom:16px;">
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--red)"></span>E-E-A-T Assessment</div>
-        <div style="margin-bottom:16px;">
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <div style="background:var(--red-bg); color:var(--red); padding:6px 12px; border-radius:6px; font-size:13px; font-weight:600;">Experience: 30/100</div>
-            <div style="background:var(--orange-bg); color:var(--orange); padding:6px 12px; border-radius:6px; font-size:13px; font-weight:600;">Expertise: 45/100</div>
-            <div style="background:var(--yellow-bg); color:var(--yellow); padding:6px 12px; border-radius:6px; font-size:13px; font-weight:600;">Authoritativeness: 50/100</div>
-            <div style="background:var(--yellow-bg); color:var(--yellow); padding:6px 12px; border-radius:6px; font-size:13px; font-weight:600;">Trustworthiness: 55/100</div>
+        <!-- Transcription stream -->
+        <div class="space-y-3 text-sm font-mono">
+          <div class="flex gap-3">
+            <span class="text-slate-500 shrink-0">00:04</span>
+            <p class="text-slate-200">मेरा <span class="text-brand-300">account number</span> है 4321...</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="text-slate-500 shrink-0">00:07</span>
+            <p class="text-slate-200">payment <span class="text-brand-300">कल तक</span> कर दूंगा</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="text-slate-500 shrink-0">00:09</span>
+            <p class="text-slate-400"><span class="inline-block w-2 h-4 align-middle bg-brand-400 animate-pulse"></span></p>
           </div>
         </div>
-        <ul class="check-list">
-          <li class="check-item">
-            <div class="check-icon icon-fail">✕</div>
-            <div class="check-text"><strong>Author: "developer" on all 41 articles</strong><span>This is the single most damaging E-E-A-T issue. Google's quality raters specifically look for author credentials. Reassign all posts to Ken Thomas, Ben Gandy, or named consultants.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-fail">✕</div>
-            <div class="check-text"><strong>No individual author bio pages used as authors</strong><span>Author pages exist (/ken-thomas/, /ben-gandy/, /brian-shelah/, etc.) but are not connected to articles as bylines. This is free E-E-A-T authority sitting unused.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>About page lacks individual credentials</strong><span>Team section mentions "decades of experience" but no specific certifications, prior roles, or years-in-industry per person are listed.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>NALP membership</strong><span>National Association of Landscape Professionals membership is a strong authority signal. Ensure it's prominently displayed and marked up.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>Real case studies with named clients</strong><span>Mulhall's Landscape, Mullin Landscape, Greenscape are named real-world clients with dedicated pages — strong trust signals.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>NAP consistently displayed</strong><span>Name, address (4920 Atlanta Hwy #344 Alpharetta, GA 30004), phone (404-987-2499), and email present in footer site-wide.</span></div>
-          </li>
-        </ul>
-      </div>
 
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--yellow)"></span>Content Depth Analysis</div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr><th>Page</th><th>Words</th><th>Impr.</th><th>Avg Pos</th><th>Gap</th></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>/time-and-materials-vs-fixed-fee/</td>
-                <td>1,224</td>
-                <td style="color:var(--yellow)">42,689</td>
-                <td>9.75</td>
-                <td><span class="metric-badge warn">Needs 2,000+</span></td>
-              </tr>
-              <tr>
-                <td>/6-components-of-a-change-management-plan/</td>
-                <td>1,213</td>
-                <td style="color:var(--yellow)">13,588</td>
-                <td>31.1</td>
-                <td><span class="metric-badge bad">Needs 3,000+</span></td>
-              </tr>
-              <tr>
-                <td>/components-of-an-effective-estimating-system/</td>
-                <td>~1,000</td>
-                <td>2,818</td>
-                <td>7.9</td>
-                <td><span class="metric-badge warn">Needs 1,800+</span></td>
-              </tr>
-              <tr>
-                <td>/leadership-weaknesses-blind-spots/</td>
-                <td>~900</td>
-                <td>2,812</td>
-                <td>13.1</td>
-                <td><span class="metric-badge warn">Needs 1,500+</span></td>
-              </tr>
-              <tr>
-                <td>/when-is-overtime-ok/</td>
-                <td>~800</td>
-                <td>1,827</td>
-                <td>6.7</td>
-                <td><span class="metric-badge ok">CTR fix only</span></td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="mt-6 pt-5 border-t border-white/5 grid grid-cols-3 gap-3 text-center">
+          <div>
+            <div class="text-xl font-heading font-bold text-white">9</div>
+            <div class="text-[11px] text-slate-400 uppercase tracking-wider">STT langs</div>
+          </div>
+          <div>
+            <div class="text-xl font-heading font-bold text-white">22</div>
+            <div class="text-[11px] text-slate-400 uppercase tracking-wider">TTS langs</div>
+          </div>
+          <div>
+            <div class="text-xl font-heading font-bold text-white">4.8<span class="text-brand-400">/5</span></div>
+            <div class="text-[11px] text-slate-400 uppercase tracking-wider">Hindi MOS</div>
+          </div>
         </div>
-        <div class="fix-box" style="margin-top:12px;">
-          <strong>Content depth rule:</strong>
-          For pages at position 9–15, word count rarely wins alone — but for position 31+, comprehensive content (3,000+ words) with FAQ sections is the path to page 1.
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticker logo strip -->
+  <div class="relative border-t border-white/5 bg-ink-950/60 py-6 overflow-hidden">
+    <div class="flex whitespace-nowrap ticker-track gap-14 text-slate-500 text-sm uppercase tracking-[0.2em] font-medium">
+      <span>Vodafone Idea</span><span>·</span>
+      <span>GroMo</span><span>·</span>
+      <span>TVS</span><span>·</span>
+      <span>Indigo</span><span>·</span>
+      <span>Metropolis</span><span>·</span>
+      <span>Asus</span><span>·</span>
+      <span>Bajaj Finserv</span><span>·</span>
+      <span>Vodafone Idea</span><span>·</span>
+      <span>GroMo</span><span>·</span>
+      <span>TVS</span><span>·</span>
+      <span>Indigo</span><span>·</span>
+      <span>Metropolis</span><span>·</span>
+      <span>Asus</span><span>·</span>
+      <span>Bajaj Finserv</span><span>·</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHO TARANG IS FOR ============ -->
+<section id="who" class="py-24 lg:py-32 bg-white">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="max-w-3xl">
+      <p class="section-label text-brand-600 font-heading text-xs font-semibold uppercase tracking-[0.2em] mb-4">Who Tarang is for</p>
+      <h2 class="font-heading font-extrabold text-ink-900 text-4xl lg:text-5xl leading-[1.1] mb-5">
+        Tarang is the speech layer your voicebot is missing.
+      </h2>
+      <p class="text-slate-600 text-lg leading-relaxed">
+        Whether you're building voicebots to sell, or building them for your own operations — Tarang plugs in where your STT/TTS needs to work, and stops being the reason your roadmap slips.
+      </p>
+    </div>
+
+    <div class="mt-14 grid md:grid-cols-2 gap-6">
+      <!-- Card A — builders (sky: tech/developer) -->
+      <article class="group relative rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-8 hover:border-sky-300 hover:shadow-card hover:-translate-y-0.5 transition overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-400 to-sky-600"></div>
+        <div class="inline-flex items-center gap-2 text-[11px] font-heading font-semibold uppercase tracking-[0.2em] text-sky-700 bg-sky-50 border border-sky-100 rounded-full px-3 py-1 mb-6">
+          <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+          Building voicebots?
+        </div>
+        <h3 class="font-heading font-bold text-2xl lg:text-3xl text-ink-900 leading-tight mb-4">
+          Stop rebuilding STT/TTS from scratch.
+        </h3>
+        <p class="text-slate-600 leading-relaxed mb-7">
+          You're building the agent, the orchestration, the workflows — and every sprint, speech accuracy is the thing holding you back. Plug in Tarang and get back to shipping the parts of your product that actually differentiate it.
+        </p>
+        <a href="#product" class="inline-flex items-center gap-2 font-semibold text-sky-700 hover:text-sky-800">
+          See the API docs
+          <svg class="w-4 h-4 transition group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </article>
+
+      <!-- Card B — in-house ops (coral: urgency/volume) -->
+      <article class="group relative rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-8 hover:border-coral-300 hover:shadow-card hover:-translate-y-0.5 transition overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-coral-400 to-coral-600"></div>
+        <div class="inline-flex items-center gap-2 text-[11px] font-heading font-semibold uppercase tracking-[0.2em] rounded-full px-3 py-1 mb-6" style="color:#BE123C; background:#FFF1F2; border:1px solid #FFE4E6;">
+          <span class="w-1.5 h-1.5 rounded-full" style="background:#F43F5E;"></span>
+          Running your own calls?
+        </div>
+        <h3 class="font-heading font-bold text-2xl lg:text-3xl text-ink-900 leading-tight mb-4">
+          You have the volume. We have the engine.
+        </h3>
+        <p class="text-slate-600 leading-relaxed mb-7">
+          You're running collections, outbound sales, service, or support at serious call volume — and your team is building voice AI in-house. Skip the year you'd spend getting Indian STT/TTS right. Start with the speech engine already live at enterprise scale.
+        </p>
+        <a href="#contact" class="inline-flex items-center gap-2 font-semibold" style="color:#BE123C;">
+          Book a technical walkthrough
+          <svg class="w-4 h-4 transition group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRODUCTION CREDIBILITY ============ -->
+<section class="py-24 lg:py-32 bg-slate-50 border-y border-slate-200">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="max-w-3xl">
+      <p class="section-label text-brand-600 font-heading text-xs font-semibold uppercase tracking-[0.2em] mb-4">Why teams choose Tarang</p>
+      <h2 class="font-heading font-extrabold text-ink-900 text-4xl lg:text-5xl leading-[1.1] mb-5">
+        Real calls. Real production. <span class="text-gradient-dark">Real enterprises.</span>
+      </h2>
+      <p class="text-slate-600 text-lg leading-relaxed">
+        Tarang isn't a research preview. The same engine running live at Vodafone Idea and other major enterprises across telecom, BFSI, and auto retail is available to your team today — handling millions of real calls in real Indian languages.
+      </p>
+    </div>
+
+    <!-- Marquee logo strip -->
+    <div class="mt-12 rounded-2xl border border-slate-200 bg-white py-10 overflow-hidden">
+      <p class="text-xs text-slate-400 font-heading uppercase tracking-[0.2em] mb-6 px-8">Trusted in production by</p>
+      <div class="relative">
+        <!-- Fade edges -->
+        <div class="pointer-events-none absolute inset-y-0 left-0 w-24 z-10 bg-gradient-to-r from-white to-transparent"></div>
+        <div class="pointer-events-none absolute inset-y-0 right-0 w-24 z-10 bg-gradient-to-l from-white to-transparent"></div>
+
+        <div class="flex whitespace-nowrap ticker-track gap-16 items-center">
+          <!-- Set 1 -->
+          <span class="font-heading font-bold text-2xl text-slate-700 tracking-tight">Vodafone Idea</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+          <span class="font-heading font-bold text-2xl text-slate-700 tracking-tight">GroMo</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+          <span class="font-heading font-bold text-2xl text-slate-700 tracking-tight">TVS</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+          <span class="font-heading font-bold text-2xl text-slate-700 tracking-tight">Indigo</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+          <span class="font-heading font-bold text-2xl text-slate-700 tracking-tight">Metropolis</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+          <span class="font-heading font-bold text-2xl text-slate-700 tracking-tight">Asus</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+          <span class="font-heading font-bold text-2xl text-slate-700 tracking-tight">Bajaj Finserv</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+          <!-- Set 2 (duplicate for seamless loop) -->
+          <span class="font-heading font-bold text-2xl text-slate-700 tracking-tight">Vodafone Idea</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+          <span class="font-heading font-bold text-2xl text-slate-700 tracking-tight">GroMo</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+          <span class="font-heading font-bold text-2xl text-slate-700 tracking-tight">TVS</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+          <span class="font-heading font-bold text-2xl text-slate-700 tracking-tight">Indigo</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+          <span class="font-heading font-bold text-2xl text-slate-700 tracking-tight">Metropolis</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+          <span class="font-heading font-bold text-2xl text-slate-700 tracking-tight">Asus</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+          <span class="font-heading font-bold text-2xl text-slate-700 tracking-tight">Bajaj Finserv</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
         </div>
       </div>
     </div>
 
-    <div class="grid-3">
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--accent)"></span>T&M Page Deep Audit</div>
-        <div class="opp-card">
-          <div class="opp-url">/time-and-materials-vs-fixed-fee/</div>
-          <ul class="check-list" style="margin-top:8px;">
-            <li class="check-item">
-              <div class="check-icon icon-warn">!</div>
-              <div class="check-text"><strong>Title keyword mismatch</strong><span>Title says "Pricing Fundamentals" but top queries are "t&m meaning", "t&m vs fixed price" — doesn't match search language.</span></div>
-            </li>
-            <li class="check-item">
-              <div class="check-icon icon-fail">✕</div>
-              <div class="check-text"><strong>FAQ section with no FAQ schema</strong><span>FAQ section present → missing JSON-LD FAQ schema. Position 2.7 for "t&m meaning" = rich snippet waiting.</span></div>
-            </li>
-            <li class="check-item">
-              <div class="check-icon icon-fail">✕</div>
-              <div class="check-text"><strong>Featured image: "money.jpg" no alt</strong><span>Generic stock photo with no alt text. Should be descriptive and topically relevant.</span></div>
-            </li>
-            <li class="check-item">
-              <div class="check-icon icon-fail">✕</div>
-              <div class="check-text"><strong>Author: "developer"</strong><span>ScholarlyArticle schema shows author "developer". Should be Ken Thomas or Ben Gandy.</span></div>
-            </li>
+    <!-- Three pillars -->
+    <div class="mt-14 grid md:grid-cols-3 gap-6">
+      <div class="relative rounded-2xl bg-white border border-slate-200 p-7 hover:shadow-card hover:-translate-y-0.5 transition overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-400 to-brand-600"></div>
+        <div class="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center mb-5 ring-1 ring-brand-100">
+          <svg class="w-5 h-5 text-brand-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+        </div>
+        <h3 class="font-heading font-bold text-lg text-ink-900 mb-2">Proven at enterprise scale</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">Live in production at Vodafone Idea and other major Indian enterprises across telecom, banking, and auto retail — handling millions of real calls, every day.</p>
+      </div>
+      <div class="relative rounded-2xl bg-white border border-slate-200 p-7 hover:shadow-card hover:-translate-y-0.5 transition overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-400 to-sky-600"></div>
+        <div class="w-10 h-10 rounded-lg bg-sky-50 flex items-center justify-center mb-5 ring-1 ring-sky-100">
+          <svg class="w-5 h-5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <h3 class="font-heading font-bold text-lg text-ink-900 mb-2">Built for telephony</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">Native 8 kHz μ-law support. Noise cancellation tuned for call-centre chatter and PSTN compression. Accuracy that holds on audio other models choke on.</p>
+      </div>
+      <div class="relative rounded-2xl bg-white border border-slate-200 p-7 hover:shadow-card hover:-translate-y-0.5 transition overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sun-400 to-sun-600"></div>
+        <div class="w-10 h-10 rounded-lg bg-sun-50 flex items-center justify-center mb-5 ring-1 ring-sun-100" style="background:#FFFBEB;">
+          <svg class="w-5 h-5" style="color:#D97706;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3 class="font-heading font-bold text-lg text-ink-900 mb-2">Compliant by design</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">India data residency on AWS ap-south-1. Aligned with DPDP, RBI, and IRDAI. BYOC available on your AWS or GCP. Your audio never leaves your control.</p>
+      </div>
+    </div>
+
+    <!-- SLA bar -->
+    <div class="mt-10 relative rounded-xl bg-ink-900 text-slate-300 px-6 py-5 flex flex-wrap gap-x-8 gap-y-2 text-sm items-center overflow-hidden">
+      <div class="absolute left-0 top-0 bottom-0 w-1 spectrum-strip"></div>
+      <span class="inline-flex items-center gap-2 pl-2"><span class="text-brand-400 font-heading font-bold">99.9%</span> monthly uptime</span>
+      <span class="text-slate-600">·</span>
+      <span><span class="text-sky-400 font-heading font-bold">4-hour</span> Sev-1 response</span>
+      <span class="text-slate-600">·</span>
+      <span>Dedicated Slack channel</span>
+      <span class="text-slate-600">·</span>
+      <span>Stateless — audio never persisted</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROBLEM ============ -->
+<section class="py-24 lg:py-36 bg-ink-900 relative overflow-hidden">
+  <div class="absolute inset-0 grid-bg opacity-40"></div>
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] rounded-full blur-3xl opacity-30" style="background:radial-gradient(circle, rgba(16,185,129,0.15), transparent 70%);"></div>
+
+  <div class="relative max-w-5xl mx-auto px-6 lg:px-10">
+    <!-- Header -->
+    <div class="text-center max-w-3xl mx-auto mb-20">
+      <p class="section-label text-brand-400 font-heading text-xs font-semibold uppercase tracking-[0.2em] mb-6 inline-block">The problem with most voice AI in India</p>
+      <h2 class="font-heading font-extrabold text-white text-4xl lg:text-6xl leading-[1.1] tracking-tight">
+        English models don't learn Hindi.
+        <span class="block mt-2">They <span class="text-gradient italic">approximate</span> it.</span>
+      </h2>
+    </div>
+
+    <!-- 3 problem blocks — stacked, spacious, with numbered prefixes -->
+    <div class="space-y-6 lg:space-y-8 mb-20">
+
+      <article class="relative rounded-2xl border border-white/10 bg-white/[0.03] p-8 lg:p-10 hover:border-white/20 hover:bg-white/[0.05] transition">
+        <div class="flex items-start gap-6 lg:gap-10">
+          <div class="shrink-0">
+            <div class="w-12 h-12 rounded-xl border border-brand-500/30 bg-brand-500/10 flex items-center justify-center font-heading font-bold text-brand-400 text-lg">01</div>
+          </div>
+          <div class="flex-1 pt-1">
+            <h3 class="font-heading font-bold text-white text-xl lg:text-2xl leading-snug mb-4">
+              Most speech AI was trained on English — and bolted Hindi on top.
+            </h3>
+            <p class="text-slate-300 leading-[1.85] text-base lg:text-[17px] max-w-3xl">
+              It was fine-tuned on a handful of Indian-language hours to check the "multilingual" box. The result: models that stumble on Indian accents, collapse on telephony audio, and produce Hindi that sounds like it was translated from a phrasebook.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <article class="relative rounded-2xl border border-white/10 bg-white/[0.03] p-8 lg:p-10 hover:border-white/20 hover:bg-white/[0.05] transition">
+        <div class="flex items-start gap-6 lg:gap-10">
+          <div class="shrink-0">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center font-heading font-bold text-lg" style="border:1px solid rgba(6,182,212,0.3); background:rgba(6,182,212,0.1); color:#22D3EE;">02</div>
+          </div>
+          <div class="flex-1 pt-1">
+            <h3 class="font-heading font-bold text-white text-xl lg:text-2xl leading-snug mb-4">
+              Stitching vendors together multiplies your errors.
+            </h3>
+            <p class="text-slate-300 leading-[1.85] text-base lg:text-[17px] max-w-3xl">
+              Run one provider's STT into another's TTS and every error upstream compounds downstream. The bot pauses in the wrong places. Proper nouns get mangled. Customers hang up.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <article class="relative rounded-2xl border border-white/10 bg-white/[0.03] p-8 lg:p-10 hover:border-white/20 hover:bg-white/[0.05] transition">
+        <div class="flex items-start gap-6 lg:gap-10">
+          <div class="shrink-0">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center font-heading font-bold text-lg" style="border:1px solid rgba(251,191,36,0.35); background:rgba(245,158,11,0.1); color:#FBBF24;">03</div>
+          </div>
+          <div class="flex-1 pt-1">
+            <h3 class="font-heading font-bold text-white text-xl lg:text-2xl leading-snug mb-4">
+              Your customers don't speak textbook Hindi.
+            </h3>
+            <p class="text-slate-300 leading-[1.85] text-base lg:text-[17px] max-w-3xl">
+              They speak the Hindi of Patna, Raipur, Kanpur, Hyderabad — mixed with English, on 8 kHz phone lines, through background noise. Your voicebot needs a speech engine built for exactly that.
+            </p>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Pull quote -->
+    <figure class="relative max-w-4xl mx-auto text-center py-10">
+      <svg class="absolute -top-2 left-1/2 -translate-x-1/2 w-12 h-12 text-brand-400/30" viewBox="0 0 24 24" fill="currentColor"><path d="M7.17 17c-.51 0-.97-.13-1.38-.4-.41-.27-.73-.62-.97-1.06-.24-.44-.36-.93-.36-1.47 0-.66.16-1.32.48-1.98.32-.66.73-1.27 1.25-1.83.51-.56 1.07-1.02 1.66-1.38l1.23 1.23c-.47.37-.87.8-1.19 1.28-.32.48-.5.95-.54 1.41.08-.03.2-.04.36-.04.4 0 .75.11 1.05.34.3.23.54.52.7.88.17.36.25.74.25 1.15 0 .43-.09.83-.28 1.2-.19.37-.45.65-.78.86-.33.21-.7.31-1.11.31zm7 0c-.51 0-.97-.13-1.38-.4-.41-.27-.73-.62-.97-1.06-.24-.44-.36-.93-.36-1.47 0-.66.16-1.32.48-1.98.32-.66.73-1.27 1.25-1.83.51-.56 1.07-1.02 1.66-1.38l1.23 1.23c-.47.37-.87.8-1.19 1.28-.32.48-.5.95-.54 1.41.08-.03.2-.04.36-.04.4 0 .75.11 1.05.34.3.23.54.52.7.88.17.36.25.74.25 1.15 0 .43-.09.83-.28 1.2-.19.37-.45.65-.78.86-.33.21-.7.31-1.11.31z"/></svg>
+      <blockquote class="font-heading text-2xl lg:text-4xl text-white leading-[1.3] tracking-tight pt-6">
+        "Accuracy upstream is everything. <span class="text-gradient">Wrong text in</span> means wrong answer out."
+      </blockquote>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ PRODUCT ============ -->
+<section id="product" class="py-24 lg:py-32 bg-white">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="max-w-3xl">
+      <p class="section-label text-brand-600 font-heading text-xs font-semibold uppercase tracking-[0.2em] mb-4">The Tarang engine</p>
+      <h2 class="font-heading font-extrabold text-ink-900 text-4xl lg:text-5xl leading-[1.1] mb-5">
+        One engine. Two stacks. <span class="text-gradient-dark">Tuned together.</span>
+      </h2>
+      <p class="text-slate-600 text-lg leading-relaxed">
+        Tarang STT and Tarang TTS are developed and tuned as a pair. Use them standalone, or together — end-to-end accuracy across the stack is significantly higher than anything you'll get by mixing providers.
+      </p>
+    </div>
+
+    <div class="mt-14 grid lg:grid-cols-2 gap-6">
+      <!-- STT Card -->
+      <article class="rounded-2xl border border-slate-200 overflow-hidden bg-white flex flex-col hover:shadow-card transition">
+        <div class="bg-gradient-to-br from-ink-900 to-ink-800 p-8 border-b border-slate-200">
+          <div class="flex items-center justify-between mb-6">
+            <p class="text-[11px] font-heading font-semibold uppercase tracking-[0.2em] text-brand-400">Speech-to-Text</p>
+            <span class="text-xs font-mono text-slate-400">STT</span>
+          </div>
+          <h3 class="font-heading font-bold text-2xl lg:text-3xl text-white leading-tight">
+            Understand what the caller actually said.
+          </h3>
+        </div>
+        <div class="p-8 flex-1 flex flex-col">
+          <p class="text-slate-600 leading-relaxed mb-7">
+            Real-time streaming transcription for Indian-language voice bots, IVRs, and post-call analytics. Tuned for telephony audio, noisy environments, and regional accents.
+          </p>
+          <ul class="space-y-3 text-sm text-slate-700 mb-8">
+            <li class="flex gap-3"><span class="text-brand-500 mt-1">▸</span> 9 Indian languages + 4 Hindi dialects (Bhojpuri, Chhattisgarhi, Magahi, Maithili)</li>
+            <li class="flex gap-3"><span class="text-brand-500 mt-1">▸</span> <strong class="font-semibold">Automatic language detection</strong> — one stream, no manual switching</li>
+            <li class="flex gap-3"><span class="text-brand-500 mt-1">▸</span> Real-time streaming over WebSocket, ~150 ms latency</li>
+            <li class="flex gap-3"><span class="text-brand-500 mt-1">▸</span> Native 8 kHz μ-law for PSTN, IVR, and SIP</li>
+            <li class="flex gap-3"><span class="text-brand-500 mt-1">▸</span> Active noise cancellation for call-centre audio</li>
+            <li class="flex gap-3"><span class="text-brand-500 mt-1">▸</span> Speaker diarisation for post-call analytics (batch)</li>
+            <li class="flex gap-3"><span class="text-brand-500 mt-1">▸</span> Custom fine-tuning on your domain, terminology, accents</li>
           </ul>
+          <a href="#playground" class="mt-auto inline-flex items-center gap-2 font-semibold text-brand-600 hover:text-brand-700">
+            Hear a sample
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
         </div>
-      </div>
+      </article>
 
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--orange)"></span>Change Management Page Audit</div>
-        <div class="opp-card">
-          <div class="opp-url">/6-components-of-a-change-management-plan/</div>
-          <ul class="check-list" style="margin-top:8px;">
-            <li class="check-item">
-              <div class="check-icon icon-fail">✕</div>
-              <div class="check-text"><strong>Position 31 — page 3</strong><span>13,588 impressions with essentially 0 organic clicks. Content needs to be 3x deeper to compete.</span></div>
-            </li>
-            <li class="check-item">
-              <div class="check-icon icon-fail">✕</div>
-              <div class="check-text"><strong>No FAQ section or FAQ schema</strong><span>Change management has enormous FAQ search volume. "What is a change management plan?" alone has thousands of monthly searches.</span></div>
-            </li>
-            <li class="check-item">
-              <div class="check-icon icon-warn">!</div>
-              <div class="check-text"><strong>No landscape industry specificity</strong><span>Generic change management content. Adding landscape-specific examples, case studies, and data would dramatically differentiate it.</span></div>
-            </li>
+      <!-- TTS Card -->
+      <article class="rounded-2xl border border-slate-200 overflow-hidden bg-white flex flex-col hover:shadow-card transition">
+        <div class="bg-gradient-to-br from-brand-700 to-brand-500 p-8 border-b border-slate-200">
+          <div class="flex items-center justify-between mb-6">
+            <p class="text-[11px] font-heading font-semibold uppercase tracking-[0.2em] text-brand-100">Text-to-Speech</p>
+            <span class="text-xs font-mono text-brand-100">TTS</span>
+          </div>
+          <h3 class="font-heading font-bold text-2xl lg:text-3xl text-white leading-tight">
+            Hindi that sounds human. Not robotic.
+          </h3>
+        </div>
+        <div class="p-8 flex-1 flex flex-col">
+          <p class="text-slate-600 leading-relaxed mb-7">
+            Natural, expressive speech synthesis across all 22 Scheduled Indian languages. Clone any voice from five seconds of audio. Deploy in streaming or batch.
+          </p>
+          <ul class="space-y-3 text-sm text-slate-700 mb-8">
+            <li class="flex gap-3"><span class="text-brand-500 mt-1">▸</span> 22 Indian languages + regional dialects (including Haryanvi)</li>
+            <li class="flex gap-3"><span class="text-brand-500 mt-1">▸</span> 30+ pre-built voices, each fluent across 9 languages</li>
+            <li class="flex gap-3"><span class="text-brand-500 mt-1">▸</span> Voice cloning from 5 seconds of reference audio</li>
+            <li class="flex gap-3"><span class="text-brand-500 mt-1">▸</span> <strong class="font-semibold">Cross-lingual cloning</strong> — clone in Hindi, speak in Tamil</li>
+            <li class="flex gap-3"><span class="text-brand-500 mt-1">▸</span> Custom pronunciation for brand names, currency, domain terms</li>
+            <li class="flex gap-3"><span class="text-brand-500 mt-1">▸</span> Streaming TTS with 200–250 ms time-to-first-byte</li>
           </ul>
+          <a href="#playground" class="mt-auto inline-flex items-center gap-2 font-semibold text-brand-600 hover:text-brand-700">
+            Clone a voice
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ OUTPUT MODES ============ -->
+<section class="py-24 lg:py-32 bg-ink-900 relative overflow-hidden">
+  <div class="absolute inset-0 grid-bg opacity-30"></div>
+  <div class="relative max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="max-w-3xl">
+      <p class="section-label text-brand-400 font-heading text-xs font-semibold uppercase tracking-[0.2em] mb-4">One audio, four outputs</p>
+      <h2 class="font-heading font-extrabold text-white text-4xl lg:text-5xl leading-[1.1] mb-5">
+        Same audio. <span class="text-gradient">Multiple ways</span> to use it.
+      </h2>
+      <p class="text-slate-400 text-lg leading-relaxed">
+        Tarang STT doesn't just transcribe. Get the output in whichever format your downstream workflow actually needs.
+      </p>
+    </div>
+
+    <!-- Shared input pill -->
+    <div class="mt-12 mb-6 flex items-center gap-3 text-sm font-mono">
+      <span class="inline-flex items-center gap-2 rounded-full bg-ink-800 border border-white/10 px-4 py-2 text-slate-300">
+        <span class="w-1.5 h-1.5 rounded-full bg-brand-400"></span>
+        Input audio
+      </span>
+      <span class="text-slate-500">→</span>
+      <span class="text-slate-300">"मेरा फोन नंबर है नौ आठ चार zero"</span>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Transcribe — green -->
+      <div class="group relative rounded-xl bg-ink-800/60 border border-white/10 p-6 hover:border-brand-400/50 hover:-translate-y-0.5 transition overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-brand-400 via-brand-500 to-brand-400"></div>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-brand-400"></span>
+            <h4 class="font-heading font-bold text-white">Transcribe</h4>
+          </div>
+          <span class="text-[10px] font-mono text-brand-400 uppercase tracking-wider">Native</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-4 min-h-[2.5rem]">Native script with formatting and number normalization.</p>
+        <div class="rounded-lg bg-ink-950 p-3 font-mono text-xs text-brand-300 border border-brand-500/20">
+          मेरा फोन नंबर है 9840...
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--green)"></span>Author Fix — Quick Win</div>
-        <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">Existing author pages that should be linked to articles:</p>
-        <ul class="check-list">
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>/ken-thomas/</strong><span>Co-founder. Business strategy + Green Dot System expertise. Assign business/leadership articles.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>/ben-gandy/</strong><span>Co-founder. Operations + field expertise. Assign operations/production articles.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>/brian-shelah/, /timothy-mccolgan/, /steve-krumnaker/, /steven-bruce/</strong><span>4 additional consultant pages. Distribute articles by expertise area.</span></div>
-          </li>
+      <!-- Translate — sky -->
+      <div class="group relative rounded-xl bg-ink-800/60 border border-white/10 p-6 hover:border-sky-400/50 hover:-translate-y-0.5 transition overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-sky-400 via-sky-500 to-sky-400"></div>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+            <h4 class="font-heading font-bold text-white">Translate</h4>
+          </div>
+          <span class="text-[10px] font-mono text-sky-400 uppercase tracking-wider">EN</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-4 min-h-[2.5rem]">Indian languages straight to English.</p>
+        <div class="rounded-lg bg-ink-950 p-3 font-mono text-xs text-sky-300 border border-sky-500/20">
+          My phone number is 9840...
+        </div>
+      </div>
+
+      <!-- Transliterate — amber/sun -->
+      <div class="group relative rounded-xl bg-ink-800/60 border border-white/10 p-6 hover:border-sun-400/50 hover:-translate-y-0.5 transition overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-sun-400 via-sun-500 to-sun-400"></div>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-sun-400"></span>
+            <h4 class="font-heading font-bold text-white">Transliterate</h4>
+          </div>
+          <span class="text-[10px] font-mono text-sun-400 uppercase tracking-wider">Latin</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-4 min-h-[2.5rem]">Indian languages written in Latin script.</p>
+        <div class="rounded-lg bg-ink-950 p-3 font-mono text-xs text-sun-300 border border-sun-500/20">
+          mera phone number hai 9840...
+        </div>
+      </div>
+
+      <!-- Verbatim — coral -->
+      <div class="group relative rounded-xl bg-ink-800/60 border border-white/10 p-6 hover:border-coral-400/50 hover:-translate-y-0.5 transition overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-coral-400 via-coral-500 to-coral-400"></div>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-coral-400"></span>
+            <h4 class="font-heading font-bold text-white">Verbatim</h4>
+          </div>
+          <span class="text-[10px] font-mono text-coral-400 uppercase tracking-wider">Raw</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-4 min-h-[2.5rem]">Every word, every filler, every spoken digit preserved.</p>
+        <div class="rounded-lg bg-ink-950 p-3 font-mono text-xs text-coral-300 border border-coral-500/20">
+          मेरा फोन नंबर है नौ आठ चार zero नौ पांच zero
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROOF / BENCHMARKS ============ -->
+<section id="proof" class="py-24 lg:py-32 bg-white">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <!-- Placeholder banner (flagged in copy) -->
+    <div class="mb-12 rounded-xl border border-amber-200 bg-amber-50 px-5 py-3 text-sm text-amber-800 flex items-start gap-3">
+      <svg class="w-5 h-5 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>
+      <span><strong>Placeholder:</strong> citations below pending real submission to Hugging Face Open ASR Leaderboard &amp; AI4Bharat IndicSUPERB.</span>
+    </div>
+
+    <div class="max-w-3xl">
+      <p class="section-label text-brand-600 font-heading text-xs font-semibold uppercase tracking-[0.2em] mb-4">The numbers</p>
+      <h2 class="font-heading font-extrabold text-ink-900 text-4xl lg:text-5xl leading-[1.1] mb-5">
+        Benchmarked where it counts.<br/><span class="text-gradient-dark">Proven where it matters.</span>
+      </h2>
+      <p class="text-slate-600 text-lg leading-relaxed">
+        Latency you can feel. Accuracy that holds on real Indian audio. Numbers measured on public benchmarks, not just internal test sets.
+      </p>
+    </div>
+
+    <div class="mt-14 grid md:grid-cols-2 gap-5">
+      <!-- Latency — sky (speed/real-time) -->
+      <div class="relative rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-8 hover:shadow-card hover:-translate-y-0.5 transition overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-400 to-sky-600"></div>
+        <div class="inline-flex items-center gap-2 text-[11px] font-heading font-semibold uppercase tracking-[0.15em] text-sky-700 bg-sky-50 border border-sky-100 rounded-full px-3 py-1 mb-5">
+          <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          Speed
+        </div>
+        <div class="font-heading font-extrabold text-5xl lg:text-6xl mb-3" style="background:linear-gradient(135deg,#06B6D4,#22D3EE); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;">~150 ms</div>
+        <p class="font-heading font-semibold text-ink-900 text-lg mb-2">Streaming latency</p>
+        <p class="text-sm text-slate-600 leading-relaxed mb-4">Fast enough to feel like a real conversation, not a turn-based exchange. Measured on real-time WebSocket streaming.</p>
+        <p class="text-xs text-slate-400 font-mono">Source: Internal production measurement.</p>
+      </div>
+
+      <!-- CER — green (accuracy) -->
+      <div class="relative rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-8 hover:shadow-card hover:-translate-y-0.5 transition overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-400 to-brand-600"></div>
+        <div class="inline-flex items-center gap-2 text-[11px] font-heading font-semibold uppercase tracking-[0.15em] text-brand-700 bg-brand-50 border border-brand-100 rounded-full px-3 py-1 mb-5">
+          <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+          Accuracy
+        </div>
+        <div class="font-heading font-extrabold text-5xl lg:text-6xl text-gradient mb-3">CER 4–7%</div>
+        <p class="font-heading font-semibold text-ink-900 text-lg mb-2">Hindi telephony audio</p>
+        <p class="text-sm text-slate-600 leading-relaxed mb-4">Roughly 4 characters off per 100. Strong accuracy on Indian-accented Hindi over telephony audio, where most models degrade sharply.</p>
+        <p class="text-xs text-slate-400 font-mono">Source: Hugging Face Open ASR Leaderboard — Hindi telephony split. [pending]</p>
+      </div>
+
+      <!-- MOS — amber (human/natural) -->
+      <div class="relative rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-8 hover:shadow-card hover:-translate-y-0.5 transition overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sun-400 to-sun-600"></div>
+        <div class="inline-flex items-center gap-2 text-[11px] font-heading font-semibold uppercase tracking-[0.15em] rounded-full px-3 py-1 mb-5" style="color:#B45309; background:#FFFBEB; border:1px solid #FEF3C7;">
+          <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          Naturalness
+        </div>
+        <div class="font-heading font-extrabold text-5xl lg:text-6xl mb-3" style="background:linear-gradient(135deg,#F59E0B,#FBBF24); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;">MOS 4.8<span class="text-slate-300">/5</span></div>
+        <p class="font-heading font-semibold text-ink-900 text-lg mb-2">Hindi TTS quality</p>
+        <p class="text-sm text-slate-600 leading-relaxed mb-4">Best-in-class score for Indian-language synthesis in blind listening tests. Indian English reaches MOS 4.2/5.</p>
+        <p class="text-xs text-slate-400 font-mono">Source: AI4Bharat IndicTTS evaluation. [pending]</p>
+      </div>
+
+      <!-- Clone — coral (emphasis/unique capability) -->
+      <div class="relative rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-8 hover:shadow-card hover:-translate-y-0.5 transition overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-coral-400 to-coral-600"></div>
+        <div class="inline-flex items-center gap-2 text-[11px] font-heading font-semibold uppercase tracking-[0.15em] rounded-full px-3 py-1 mb-5" style="color:#BE123C; background:#FFF1F2; border:1px solid #FFE4E6;">
+          <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 1a9 9 0 1 0 9 9M21 3l-9 9M15 3h6v6"/></svg>
+          Cloning
+        </div>
+        <div class="font-heading font-extrabold text-5xl lg:text-6xl mb-3" style="background:linear-gradient(135deg,#F43F5E,#FB7185); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;">5 sec</div>
+        <p class="font-heading font-semibold text-ink-900 text-lg mb-2">Voice cloning sample</p>
+        <p class="text-sm text-slate-600 leading-relaxed mb-4">One short sample. Clone it, then speak in any of 22 Indian languages. Cross-lingual transfer built in.</p>
+        <p class="text-xs text-slate-400 font-mono">Demonstrable live in the playground.</p>
+      </div>
+    </div>
+
+    <p class="mt-8 text-sm text-slate-500">
+      All Tarang benchmarks are measured against public test sets and reproducible methodology.
+      <a href="#" class="text-brand-600 hover:text-brand-700 font-medium">See the full methodology →</a>
+    </p>
+  </div>
+</section>
+
+<!-- ============ LANGUAGES ============ -->
+<section id="languages" class="py-24 lg:py-32 bg-ink-900 relative overflow-hidden">
+  <div class="absolute inset-0 grid-bg opacity-30"></div>
+  <div class="relative max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="max-w-3xl">
+      <p class="section-label text-brand-400 font-heading text-xs font-semibold uppercase tracking-[0.2em] mb-4">Coverage</p>
+      <h2 class="font-heading font-extrabold text-white text-4xl lg:text-5xl leading-[1.1] mb-5">
+        Your customers don't speak textbook Hindi.<br/><span class="text-gradient">Neither does Tarang.</span>
+      </h2>
+      <p class="text-slate-400 text-lg leading-relaxed">
+        Coverage across the Indian languages that matter — and the dialects most models ignore entirely. Each language rendered in its own script, the way it's actually spoken and written.
+      </p>
+    </div>
+
+    <!-- STT -->
+    <div class="mt-14">
+      <div class="flex items-end justify-between flex-wrap gap-2 mb-5 border-b border-white/10 pb-3">
+        <h3 class="font-heading font-bold text-xl text-white">STT</h3>
+        <span class="text-xs font-mono text-slate-400">9 languages · 4 Hindi dialects</span>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <span class="lang-chip inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-4 py-2"><span class="font-heading font-semibold">हिन्दी</span><span class="text-slate-400">Hindi</span></span>
+        <span class="lang-chip inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-4 py-2"><span class="font-heading font-semibold">English</span><span class="text-slate-400">Indian</span></span>
+        <span class="lang-chip inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-4 py-2"><span class="font-heading font-semibold">தமிழ்</span><span class="text-slate-400">Tamil</span></span>
+        <span class="lang-chip inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-4 py-2"><span class="font-heading font-semibold">తెలుగు</span><span class="text-slate-400">Telugu</span></span>
+        <span class="lang-chip inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-4 py-2"><span class="font-heading font-semibold">मराठी</span><span class="text-slate-400">Marathi</span></span>
+        <span class="lang-chip inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-4 py-2"><span class="font-heading font-semibold">বাংলা</span><span class="text-slate-400">Bengali</span></span>
+        <span class="lang-chip inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-4 py-2"><span class="font-heading font-semibold">ગુજરાતી</span><span class="text-slate-400">Gujarati</span></span>
+        <span class="lang-chip inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-4 py-2"><span class="font-heading font-semibold">ಕನ್ನಡ</span><span class="text-slate-400">Kannada</span></span>
+        <span class="lang-chip inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-4 py-2"><span class="font-heading font-semibold">ਪੰਜਾਬੀ</span><span class="text-slate-400">Punjabi</span></span>
+      </div>
+
+      <!-- Hindi dialects -->
+      <div class="mt-6">
+        <p class="text-[11px] font-heading font-semibold uppercase tracking-[0.2em] text-slate-400 mb-3">Hindi dialects — covered natively</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-4 py-2">Bhojpuri</span>
+          <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-4 py-2">Chhattisgarhi</span>
+          <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-4 py-2">Magahi</span>
+          <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-4 py-2">Maithili</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TTS -->
+    <div class="mt-12">
+      <div class="flex items-end justify-between flex-wrap gap-2 mb-5 border-b border-white/10 pb-3">
+        <h3 class="font-heading font-bold text-xl text-white">TTS</h3>
+        <span class="text-xs font-mono text-slate-400">All 22 Scheduled Indian languages + regional dialects</span>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <!-- 22 Scheduled languages -->
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Hindi</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Bengali</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Tamil</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Telugu</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Marathi</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Gujarati</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Kannada</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Malayalam</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Odia</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Punjabi</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Assamese</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Urdu</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Sanskrit</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Nepali</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Konkani</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Maithili</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Dogri</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Bodo</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Sindhi</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Kashmiri</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Manipuri</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Santali</span>
+        <span class="lang-chip rounded-full border border-white/15 bg-white/5 text-slate-200 text-sm px-3.5 py-1.5">Haryanvi</span>
+      </div>
+    </div>
+
+    <p class="mt-12 font-heading font-bold text-white text-xl">Same engine. All languages. <span class="text-brand-400">One API.</span></p>
+  </div>
+</section>
+
+<!-- ============ USE CASES ============ -->
+<section class="py-24 lg:py-32 bg-slate-50 border-y border-slate-200">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="max-w-3xl">
+      <p class="section-label text-brand-600 font-heading text-xs font-semibold uppercase tracking-[0.2em] mb-4">What teams are building</p>
+      <h2 class="font-heading font-extrabold text-ink-900 text-4xl lg:text-5xl leading-[1.1] mb-5">
+        Built for the calls that <span class="text-gradient-dark">move your business.</span>
+      </h2>
+    </div>
+
+    <div class="mt-14 grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <!-- Collections — coral (urgency/emphasis) -->
+      <div class="group relative rounded-2xl bg-white border border-slate-200 p-7 hover:shadow-card hover:-translate-y-0.5 hover:border-coral-200 transition overflow-hidden">
+        <div class="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition" style="background:rgba(244,63,94,0.15);"></div>
+        <div class="w-11 h-11 rounded-lg text-white flex items-center justify-center mb-5 font-heading font-bold text-lg shadow-sm" style="background:linear-gradient(135deg,#F43F5E,#FB7185);">₹</div>
+        <h3 class="font-heading font-bold text-lg text-ink-900 mb-3">Collections voicebots</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">Outbound at scale in Hindi, regional languages, and local dialects. Reach customers in the language they actually speak — and understand what they say back.</p>
+      </div>
+
+      <!-- BFSI — amber/sun -->
+      <div class="group relative rounded-2xl bg-white border border-slate-200 p-7 hover:shadow-card hover:-translate-y-0.5 transition overflow-hidden" style="--h:rgba(245,158,11,0.15);">
+        <div class="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition" style="background:rgba(245,158,11,0.18);"></div>
+        <div class="w-11 h-11 rounded-lg text-white flex items-center justify-center mb-5 shadow-sm" style="background:linear-gradient(135deg,#D97706,#FBBF24);">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V10M18 21V10M9 10V7l3-4 3 4v3"/></svg>
+        </div>
+        <h3 class="font-heading font-bold text-lg text-ink-900 mb-3">BFSI IVR &amp; service bots</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">Natural conversations on legacy PSTN lines. High-accuracy STT on compressed telephony audio. TTS that handles account numbers, rupee amounts, and branded pronunciations.</p>
+      </div>
+
+      <!-- Telecom — green (production/trust) -->
+      <div class="group relative rounded-2xl bg-white border border-slate-200 p-7 hover:shadow-card hover:-translate-y-0.5 hover:border-brand-200 transition overflow-hidden">
+        <div class="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition" style="background:rgba(16,185,129,0.18);"></div>
+        <div class="w-11 h-11 rounded-lg text-white flex items-center justify-center mb-5 shadow-sm" style="background:linear-gradient(135deg,#059669,#34D399);">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <h3 class="font-heading font-bold text-lg text-ink-900 mb-3">Telecom &amp; customer service</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">Automated support at national scale. Live today at Vodafone Idea, handling millions of calls across the linguistic map of India.</p>
+      </div>
+
+      <!-- Analytics — sky (data/analysis) -->
+      <div class="group relative rounded-2xl bg-white border border-slate-200 p-7 hover:shadow-card hover:-translate-y-0.5 hover:border-sky-200 transition overflow-hidden">
+        <div class="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition" style="background:rgba(6,182,212,0.18);"></div>
+        <div class="w-11 h-11 rounded-lg text-white flex items-center justify-center mb-5 shadow-sm" style="background:linear-gradient(135deg,#0891B2,#22D3EE);">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 15l4-4 4 4 6-6"/></svg>
+        </div>
+        <h3 class="font-heading font-bold text-lg text-ink-900 mb-3">Post-call analytics &amp; QA</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">Transcription and speaker diarisation for compliance logging, agent coaching, and training-data generation. Batch or real-time, same engine.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section id="faq" class="py-24 lg:py-32 bg-white">
+  <div class="max-w-4xl mx-auto px-6 lg:px-10">
+    <div class="text-center mb-14">
+      <p class="section-label text-brand-600 font-heading text-xs font-semibold uppercase tracking-[0.2em] mb-4 inline-block">Your questions, answered</p>
+      <h2 class="font-heading font-extrabold text-ink-900 text-4xl lg:text-5xl leading-[1.1]">
+        Everything you'd ask on a first call.
+      </h2>
+    </div>
+
+    <div class="space-y-3">
+      <details open class="group rounded-xl border border-slate-200 bg-white open:bg-slate-50 hover:border-slate-300 transition">
+        <summary class="flex items-center justify-between cursor-pointer p-6 list-none">
+          <span class="font-heading font-semibold text-ink-900 text-lg">What languages does Tarang support?</span>
+          <svg class="chev w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="px-6 pb-6 text-slate-600 leading-relaxed">Tarang STT covers 9 Indian languages — Hindi, English (Indian), Tamil, Telugu, Marathi, Bengali, Gujarati, Kannada, Punjabi — plus 4 Hindi dialects (Bhojpuri, Chhattisgarhi, Magahi, Maithili). Tarang TTS covers all 22 Scheduled Indian languages plus regional dialects including Haryanvi. Automatic language detection on a single stream is supported.</div>
+      </details>
+
+      <details class="group rounded-xl border border-slate-200 bg-white open:bg-slate-50 hover:border-slate-300 transition">
+        <summary class="flex items-center justify-between cursor-pointer p-6 list-none">
+          <span class="font-heading font-semibold text-ink-900 text-lg">Does Tarang handle code-switching between Hindi and English?</span>
+          <svg class="chev w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="px-6 pb-6 text-slate-600 leading-relaxed">Yes. Tarang is trained on real Indian speech, which means natural Hindi-English code-switching, loan words, and mid-sentence language swaps are handled without breaking transcription.</div>
+      </details>
+
+      <details class="group rounded-xl border border-slate-200 bg-white open:bg-slate-50 hover:border-slate-300 transition">
+        <summary class="flex items-center justify-between cursor-pointer p-6 list-none">
+          <span class="font-heading font-semibold text-ink-900 text-lg">Can I use Tarang for real-time voice agents?</span>
+          <svg class="chev w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="px-6 pb-6 text-slate-600 leading-relaxed">Yes. Streaming STT runs at ~150 ms latency over WebSocket — fast enough for live conversational agents. Streaming TTS delivers 200–250 ms time-to-first-byte. Pipecat and LiveKit integrations are available.</div>
+      </details>
+
+      <details class="group rounded-xl border border-slate-200 bg-white open:bg-slate-50 hover:border-slate-300 transition">
+        <summary class="flex items-center justify-between cursor-pointer p-6 list-none">
+          <span class="font-heading font-semibold text-ink-900 text-lg">Does Tarang work on telephony audio?</span>
+          <svg class="chev w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="px-6 pb-6 text-slate-600 leading-relaxed">Yes, natively. Tarang supports 8 kHz μ-law audio out of the box — no up-sampling, no intermediate conversion. The model was trained and evaluated on real PSTN and SIP call data, not just studio recordings.</div>
+      </details>
+
+      <details class="group rounded-xl border border-slate-200 bg-white open:bg-slate-50 hover:border-slate-300 transition">
+        <summary class="flex items-center justify-between cursor-pointer p-6 list-none">
+          <span class="font-heading font-semibold text-ink-900 text-lg">What deployment options are available?</span>
+          <svg class="chev w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="px-6 pb-6 text-slate-600 leading-relaxed">Ori-hosted on AWS ap-south-1 (Mumbai) by default. BYOC available on your AWS or GCP account for production commitments. Your audio never leaves your cloud on BYOC, and stays stateless on the hosted option.</div>
+      </details>
+
+      <details class="group rounded-xl border border-slate-200 bg-white open:bg-slate-50 hover:border-slate-300 transition">
+        <summary class="flex items-center justify-between cursor-pointer p-6 list-none">
+          <span class="font-heading font-semibold text-ink-900 text-lg">What about compliance and data residency?</span>
+          <svg class="chev w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="px-6 pb-6 text-slate-600 leading-relaxed">All data stays in India. Tarang's architecture is aligned with DPDP, RBI, and IRDAI requirements. TLS 1.2+ in transit, AES-256 at rest, RBAC least-privilege, tenant-isolated storage, customer-managed keys on BYOC.</div>
+      </details>
+
+      <details class="group rounded-xl border border-slate-200 bg-white open:bg-slate-50 hover:border-slate-300 transition">
+        <summary class="flex items-center justify-between cursor-pointer p-6 list-none">
+          <span class="font-heading font-semibold text-ink-900 text-lg">Can I clone a voice for my brand?</span>
+          <svg class="chev w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="px-6 pb-6 text-slate-600 leading-relaxed">Yes. Voice cloning requires just 5 seconds of reference audio. Once cloned, the voice speaks across all 22 Indian languages — so your brand voice in Hindi can also speak in Tamil, Bengali, or Marathi without re-recording.</div>
+      </details>
+
+      <details class="group rounded-xl border border-slate-200 bg-white open:bg-slate-50 hover:border-slate-300 transition">
+        <summary class="flex items-center justify-between cursor-pointer p-6 list-none">
+          <span class="font-heading font-semibold text-ink-900 text-lg">How do I get started?</span>
+          <svg class="chev w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="px-6 pb-6 text-slate-600 leading-relaxed">Try the playground with no signup required. For production access, talk to our team — we'll scope your volume, use case, and deployment model, and get a POC running in days, not weeks.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section id="contact" class="py-24 lg:py-32 bg-ink-900 relative overflow-hidden">
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] rounded-full blur-3xl bg-brand-500/15"></div>
+  </div>
+  <div class="relative max-w-5xl mx-auto px-6 lg:px-10 text-center">
+    <h2 class="font-heading font-extrabold text-white text-4xl lg:text-6xl leading-[1.05] mb-5">
+      Two ways to <span class="text-gradient">start.</span>
+    </h2>
+    <p class="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed">
+      Try it yourself, or bring us in for a walkthrough. Either way, you'll be talking to the same engine running live at Vodafone Idea and other enterprises today.
+    </p>
+
+    <div class="mt-14 grid md:grid-cols-2 gap-5 text-left" id="playground">
+      <!-- Self-serve -->
+      <article class="rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 p-8 lg:p-10 text-white relative overflow-hidden">
+        <p class="text-[11px] font-heading font-semibold uppercase tracking-[0.2em] text-brand-100 mb-5">Self-serve</p>
+        <h3 class="font-heading font-bold text-3xl mb-4">Try the Playground</h3>
+        <p class="text-brand-50/90 leading-relaxed mb-8">Paste text. Hear 30+ voices across 22 languages. Clone a voice from five seconds of audio. No credit card.</p>
+        <a href="#" class="btn-primary inline-flex items-center gap-2 rounded-lg bg-white text-ink-900 font-semibold px-5 py-3 hover:bg-brand-50 transition">
+          Try the Playground
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </article>
+
+      <!-- Evaluation -->
+      <article class="rounded-2xl bg-ink-800 border border-white/10 p-8 lg:p-10 text-white">
+        <p class="text-[11px] font-heading font-semibold uppercase tracking-[0.2em] text-brand-400 mb-5">Evaluation</p>
+        <h3 class="font-heading font-bold text-3xl mb-4">Talk to our team</h3>
+        <p class="text-slate-400 leading-relaxed mb-8">For teams evaluating Tarang for production. We'll walk through your use case, discuss volume and deployment, and get you a POC running.</p>
+        <a href="#" class="inline-flex items-center gap-2 rounded-lg bg-white/10 hover:bg-white/15 border border-white/15 font-semibold px-5 py-3 transition">
+          Book a walkthrough
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </article>
+    </div>
+
+    <p class="mt-10 text-sm text-slate-500 max-w-2xl mx-auto">
+      Pricing is designed for production workloads — tiered by volume and commitment. Talk to us for a quote tuned to your traffic.
+    </p>
+
+    <p class="mt-12 font-heading text-xl text-white">
+      Same engine. Live in production. <span class="text-brand-400">Yours in a week.</span>
+    </p>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="bg-ink-950 text-slate-400 py-16">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="grid md:grid-cols-12 gap-10">
+      <div class="md:col-span-5">
+        <div class="flex items-center gap-2 text-white font-heading font-bold text-lg mb-4">
+          <span class="inline-flex w-7 h-7 rounded-md bg-brand-500 items-center justify-center text-ink-900 font-extrabold">O</span>
+          <span>Ori</span>
+          <span class="text-slate-500 font-normal ml-1">/ Tarang</span>
+        </div>
+        <p class="text-sm leading-relaxed max-w-sm">
+          Tarang, by Ori — speech infrastructure for Indian voice AI.
+        </p>
+      </div>
+
+      <div class="md:col-span-2">
+        <p class="text-xs font-heading uppercase tracking-[0.15em] text-slate-300 font-semibold mb-4">Product</p>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#product" class="hover:text-white">Tarang STT</a></li>
+          <li><a href="#product" class="hover:text-white">Tarang TTS</a></li>
+          <li><a href="#languages" class="hover:text-white">Languages</a></li>
+          <li><a href="#playground" class="hover:text-white">Playground</a></li>
         </ul>
-        <div class="fix-box">
-          <strong>WordPress fix:</strong>
-          In WP Admin → Posts → each post, change "Author" dropdown from "developer" to the appropriate consultant. Update ScholarlyArticle schema accordingly.
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- ========== CTR TAB ========== -->
-  <div id="tab-ctr" class="tab-content">
-
-    <div class="section-title">CTR Opportunities — Score: 18/100</div>
-
-    <div class="grid-2" style="margin-bottom:16px;">
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--red)"></span>CTR vs Expected Benchmark</div>
-        <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">Expected CTR by position (industry benchmark). Your pages are significantly underperforming.</p>
-        <div class="score-row"><span class="score-name">Pos 1–3 benchmark: 15–30%</span><div class="score-bar-wrap"><div class="score-bar bar-green" style="width:70%"></div></div><span class="score-num" style="color:var(--green)">—</span></div>
-        <div class="score-row"><span class="score-name">Pos 4–7 benchmark: 4–10%</span><div class="score-bar-wrap"><div class="score-bar bar-yellow" style="width:50%"></div></div><span class="score-num" style="color:var(--yellow)">—</span></div>
-        <div class="score-row"><span class="score-name">Pos 8–12 benchmark: 2–4%</span><div class="score-bar-wrap"><div class="score-bar bar-orange" style="width:30%"></div></div><span class="score-num" style="color:var(--orange)">—</span></div>
-        <div class="score-row"><span class="score-name">Pos 13+ benchmark: 0.5–2%</span><div class="score-bar-wrap"><div class="score-bar bar-red" style="width:15%"></div></div><span class="score-num" style="color:var(--red)">—</span></div>
-        <div style="border-top: 1px solid var(--border); margin-top:16px; padding-top:16px;">
-          <div style="font-size:13px; color:var(--muted);">Your site average: <strong style="color:var(--red)">0.79%</strong> across position 13.3 average. Benchmark for pos 13: ~1.5%. You're at 53% of expected CTR.</div>
-        </div>
       </div>
 
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--yellow)"></span>Zero-Click Goldmines (Fix CTR Only)</div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr><th>Query</th><th>Impr</th><th>Pos</th><th>Fix</th></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style="font-family:monospace; font-size:12px;">t&m meaning</td>
-                <td>1,471</td>
-                <td style="color:var(--green); font-weight:700">2.7</td>
-                <td><span class="metric-badge bad">FAQ Schema!</span></td>
-              </tr>
-              <tr>
-                <td style="font-family:monospace; font-size:12px;">time and material pricing</td>
-                <td>687</td>
-                <td style="color:var(--yellow); font-weight:700">6.2</td>
-                <td><span class="metric-badge warn">Title rewrite</span></td>
-              </tr>
-              <tr>
-                <td style="font-family:monospace; font-size:12px;">time and materials vs fixed fee</td>
-                <td>3,491</td>
-                <td>12.7</td>
-                <td><span class="metric-badge warn">Title + content</span></td>
-              </tr>
-              <tr>
-                <td style="font-family:monospace; font-size:12px;">t&m vs fixed price</td>
-                <td>2,012</td>
-                <td>14.5</td>
-                <td><span class="metric-badge warn">Ranking + CTR</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="fix-box" style="margin-top:12px;">
-          <strong>"t&m meaning" at position 2.7 with 0 clicks:</strong>
-          This is a featured snippet battle. Add a concise definition paragraph immediately after the H1, plus FAQ schema with "What does T&M mean?" as a question. This alone could capture 200–400 clicks/month.
-        </div>
-      </div>
-    </div>
-
-    <!-- Per-page CTR rewrite table -->
-    <div class="card" style="margin-bottom:16px;">
-      <div class="card-title"><span class="dot" style="background:var(--accent)"></span>Title Tag & Meta Description Rewrites — Top 10 Pages</div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Page</th><th>Current Title</th><th>Recommended Title</th><th>Impr.</th><th>Cur CTR</th><th>Target CTR</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td style="font-family:monospace;font-size:11px;">/time-and-materials-vs-fixed-fee/</td>
-              <td style="font-size:12px; color:var(--muted)">Pricing Fundamentals: Time and Materials vs Fixed Fee</td>
-              <td style="font-size:12px; color:var(--green)">Time & Materials vs Fixed Fee: Complete Guide [2026]</td>
-              <td>42,689</td>
-              <td class="ctr-bad">0.12%</td>
-              <td class="ctr-good">2.0%</td>
-            </tr>
-            <tr>
-              <td style="font-family:monospace;font-size:11px;">/6-components-of-a-change-management-plan/</td>
-              <td style="font-size:12px; color:var(--muted)">Change Management Plan - 6 Essential Components</td>
-              <td style="font-size:12px; color:var(--green)">Change Management Plan: 6 Steps That Actually Work</td>
-              <td>13,588</td>
-              <td class="ctr-bad">0.13%</td>
-              <td class="ctr-ok">1.0%</td>
-            </tr>
-            <tr>
-              <td style="font-family:monospace;font-size:11px;">/ (homepage)</td>
-              <td style="font-size:12px; color:var(--muted)">Landscape Business Consulting - Envisor Consulting</td>
-              <td style="font-size:12px; color:var(--green)">Landscape Business Consulting | Envisor — Grow & Scale</td>
-              <td>5,464</td>
-              <td class="ctr-good">5.89%</td>
-              <td class="ctr-good">7.0%</td>
-            </tr>
-            <tr>
-              <td style="font-family:monospace;font-size:11px;">/consult/</td>
-              <td style="font-size:12px; color:var(--muted)">Landscaping Business Consulting and Training</td>
-              <td style="font-size:12px; color:var(--green)">Landscape Business Consulting Services | Envisor</td>
-              <td>2,914</td>
-              <td class="ctr-bad">0.45%</td>
-              <td class="ctr-ok">1.5%</td>
-            </tr>
-            <tr>
-              <td style="font-family:monospace;font-size:11px;">/components-of-an-effective-estimating-system/</td>
-              <td style="font-size:12px; color:var(--muted)">Components of an Effective Estimating System</td>
-              <td style="font-size:12px; color:var(--green)">Landscape Estimating System: 5 Key Components (2026)</td>
-              <td>2,818</td>
-              <td class="ctr-bad">0.18%</td>
-              <td class="ctr-ok">1.5%</td>
-            </tr>
-            <tr>
-              <td style="font-family:monospace;font-size:11px;">/leadership-weaknesses-blind-spots/</td>
-              <td style="font-size:12px; color:var(--muted)">Leadership Weaknesses Blind Spots</td>
-              <td style="font-size:12px; color:var(--green)">Leadership Blind Spots: 7 Weaknesses Holding You Back</td>
-              <td>2,812</td>
-              <td class="ctr-bad">0.32%</td>
-              <td class="ctr-ok">1.5%</td>
-            </tr>
-            <tr>
-              <td style="font-family:monospace;font-size:11px;">/about-us/</td>
-              <td style="font-size:12px; color:var(--muted)">About Us - Envisor Consulting</td>
-              <td style="font-size:12px; color:var(--green)">About Envisor | Landscape Business Consultants Since 2011</td>
-              <td>2,457</td>
-              <td class="ctr-ok">1.51%</td>
-              <td class="ctr-ok">2.5%</td>
-            </tr>
-            <tr>
-              <td style="font-family:monospace;font-size:11px;">/experience/</td>
-              <td style="font-size:12px; color:var(--muted)">Experience - Envisor Consulting</td>
-              <td style="font-size:12px; color:var(--green)">Landscape Business Results | Envisor Client Experience</td>
-              <td>2,098</td>
-              <td class="ctr-bad">0.86%</td>
-              <td class="ctr-ok">2.0%</td>
-            </tr>
-            <tr>
-              <td style="font-family:monospace;font-size:11px;">/when-is-overtime-ok/</td>
-              <td style="font-size:12px; color:var(--muted)">When Is Overtime Ok</td>
-              <td style="font-size:12px; color:var(--green)">When Is Overtime OK? A Landscape Manager's Guide</td>
-              <td>1,827</td>
-              <td class="ctr-bad">0.11%</td>
-              <td class="ctr-ok">1.5%</td>
-            </tr>
-            <tr>
-              <td style="font-family:monospace;font-size:11px;">/mulhalls-landscape/</td>
-              <td style="font-size:12px; color:var(--muted)">Mulhall's Landscape - Envisor Consulting</td>
-              <td style="font-size:12px; color:var(--green)">Mulhall's Landscape Case Study | Consulting Results</td>
-              <td>1,741</td>
-              <td class="ctr-bad">0.40%</td>
-              <td class="ctr-ok">1.5%</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--accent2)"></span>Homepage CTR — UX Issue</div>
-        <div style="background:var(--surface2); border-radius:8px; padding:14px; margin-bottom:12px;">
-          <div style="font-size:24px; font-weight:800; color:var(--red)">5.6 seconds</div>
-          <div style="font-size:12px; color:var(--muted); margin-top:4px;">Average engagement time on homepage (4,667 views)</div>
-        </div>
-        <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Visitors land on the homepage and leave quickly because there's no clear path to relevant content. The H1 "Envision and Achieve Your Greatest Success" gives no signal about what the site does.</p>
-        <div class="fix-box">
-          <strong>UX fixes needed:</strong>
-          1. Rewrite H1 to include "landscape business consulting" keywords<br>
-          2. Add 3 clear pathway cards above the fold → /experience/, /green-dot-system/, /consult/<br>
-          3. Add social proof numbers (years in business, clients served, companies transformed)
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--yellow)"></span>CTR Impact Projection</div>
-        <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">Projected additional monthly clicks if title/meta rewrites achieve conservative targets:</p>
-        <div class="channel-row">
-          <div class="channel-top">
-            <span>/time-and-materials-vs-fixed-fee/</span>
-            <span style="color:var(--green); font-weight:700">+580 clicks/mo</span>
-          </div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--green); width:80%"></div></div>
-        </div>
-        <div class="channel-row">
-          <div class="channel-top">
-            <span>/6-components-of-a-change-management-plan/</span>
-            <span style="color:var(--yellow); font-weight:700">+113 clicks/mo</span>
-          </div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--yellow); width:40%"></div></div>
-        </div>
-        <div class="channel-row">
-          <div class="channel-top">
-            <span>FAQ schema on T&M (rich snippet)</span>
-            <span style="color:var(--green); font-weight:700">+250 clicks/mo</span>
-          </div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--green); width:55%"></div></div>
-        </div>
-        <div class="channel-row">
-          <div class="channel-top">
-            <span>Remaining top 8 pages</span>
-            <span style="color:var(--accent); font-weight:700">+200 clicks/mo</span>
-          </div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--accent); width:35%"></div></div>
-        </div>
-        <div style="border-top:1px solid var(--border); padding-top:14px; margin-top:4px;">
-          <div style="font-size:20px; font-weight:800; color:var(--green)">+1,143 clicks/month</div>
-          <div style="font-size:12px; color:var(--muted)">Conservative estimate. Current baseline: ~110 organic clicks/month.</div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- ========== TRAFFIC TAB ========== -->
-  <div id="tab-traffic" class="tab-content">
-
-    <div class="section-title">Traffic & Analytics — Score: 24/100</div>
-
-    <div class="grid-2" style="margin-bottom:16px;">
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--red)"></span>Bot Traffic Problem</div>
-        <div style="margin-bottom:16px;">
-          <div style="font-size:36px; font-weight:800; color:var(--red)">76%</div>
-          <div style="font-size:13px; color:var(--muted)">of all GA4 sessions are bot/spam traffic</div>
-        </div>
-        <div class="channel-row">
-          <div class="channel-top"><span>China (6,593 users, 1.9% eng.)</span><span style="color:var(--red)">CONFIRMED BOT</span></div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--red); width:72%"></div></div>
-        </div>
-        <div class="channel-row">
-          <div class="channel-top"><span>Singapore (1,986 users, 5.0% eng.)</span><span style="color:var(--red)">CONFIRMED BOT</span></div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--red); width:22%"></div></div>
-        </div>
-        <div class="channel-row">
-          <div class="channel-top"><span>Germany (189 users, 7.4% eng.)</span><span style="color:var(--orange)">MOSTLY BOT</span></div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--orange); width:5%"></div></div>
-        </div>
-        <div class="channel-row">
-          <div class="channel-top"><span>United States (2,011 users, 45.6%)</span><span style="color:var(--green)">REAL AUDIENCE</span></div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--green); width:22%"></div></div>
-        </div>
-        <div class="fix-box" style="margin-top:12px;">
-          <strong>Fix in GA4 Admin → Data Filters:</strong>
-          Create "Exclude China + Singapore" filter. Compare view will show ~2,700 real users instead of 10,682 inflated count. This won't affect data retroactively but will clean future reporting.
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--orange)"></span>Real Channel Mix (Bot-Cleaned)</div>
-        <div class="channel-row">
-          <div class="channel-top"><span>Organic Search (~55%)</span><span style="color:var(--green); font-weight:700">63.7% eng. rate</span></div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--green); width:55%"></div></div>
-        </div>
-        <div class="channel-row">
-          <div class="channel-top"><span>Email (~16%)</span><span style="color:var(--blue); font-weight:700">44.4% eng. rate</span></div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--blue); width:16%"></div></div>
-        </div>
-        <div class="channel-row">
-          <div class="channel-top"><span>Organic Social (~15%)</span><span style="color:var(--accent2); font-weight:700">59.4% eng. rate</span></div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--accent2); width:15%"></div></div>
-        </div>
-        <div class="channel-row">
-          <div class="channel-top"><span>Referral (~8%)</span><span style="color:var(--yellow); font-weight:700">59.6% eng. rate</span></div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--yellow); width:8%"></div></div>
-        </div>
-        <div class="channel-row">
-          <div class="channel-top"><span>Direct (~6%)</span><span style="color:var(--muted); font-weight:700">Legitimate</span></div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--muted); width:6%"></div></div>
-        </div>
-        <div class="fix-box" style="margin-top:12px;">
-          <strong>Key insight:</strong>
-          Referral (59.6%) and Organic Social (59.4%) perform nearly as well as Organic Search (63.7%). Investing in referral partnerships and LinkedIn content would diversify your acquisition mix significantly.
-        </div>
-      </div>
-    </div>
-
-    <div class="grid-3">
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--red)"></span>Missing Conversion Tracking</div>
-        <ul class="check-list">
-          <li class="check-item">
-            <div class="check-icon icon-fail">✕</div>
-            <div class="check-text"><strong>form_submit not a Key Event</strong><span>50 form submissions recorded but NOT marked as conversions. ROI is invisible.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-fail">✕</div>
-            <div class="check-text"><strong>video_complete not a Key Event</strong><span>58 video completions — high-intent signal not being measured as conversion.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-fail">✕</div>
-            <div class="check-text"><strong>Contact page visit not tracked</strong><span>/contact-envisor-consulting/ visits not configured as micro-conversion.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>No revenue/value assigned</strong><span>Even without e-commerce, assigning estimated deal value to form_submit would enable ROI reporting.</span></div>
-          </li>
-        </ul>
-        <div class="fix-box" style="margin-top:8px;">
-          <strong>GA4 Admin → Events → Mark as Key Event:</strong>
-          form_submit, video_complete, click (on schedule consultation links)
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--blue)"></span>Engagement Quality (Real Users)</div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Page</th><th>Views</th><th>Avg Time</th></tr></thead>
-            <tbody>
-              <tr><td>/envision-2026-events/</td><td>23</td><td style="color:var(--green)">109.8s</td></tr>
-              <tr><td>/consult/</td><td>428</td><td style="color:var(--green)">30.7s</td></tr>
-              <tr><td>/about-us/</td><td>514</td><td style="color:var(--green)">30.3s</td></tr>
-              <tr><td>/learn/academy/</td><td>309</td><td style="color:var(--green)">30.2s</td></tr>
-              <tr><td>/green-dot-system/</td><td>184</td><td style="color:var(--green)">30.1s</td></tr>
-              <tr><td>/experience/</td><td>674</td><td style="color:var(--yellow)">27.7s</td></tr>
-              <tr><td>/ (homepage)</td><td>4,667</td><td style="color:var(--red)">5.6s</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--green)"></span>Impression Growth Trend</div>
-        <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">Monthly GSC impressions showing strong upward trend:</p>
-        <div class="channel-row">
-          <div class="channel-top"><span>Sep 2025</span><span>4,800</span></div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--accent); width:21%"></div></div>
-        </div>
-        <div class="channel-row">
-          <div class="channel-top"><span>Oct 2025</span><span>7,700</span></div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--accent); width:34%"></div></div>
-        </div>
-        <div class="channel-row">
-          <div class="channel-top"><span>Nov 2025</span><span>8,900</span></div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--accent); width:40%"></div></div>
-        </div>
-        <div class="channel-row">
-          <div class="channel-top"><span>Dec 2025</span><span>10,600</span></div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--accent); width:47%"></div></div>
-        </div>
-        <div class="channel-row">
-          <div class="channel-top"><span>Jan 2026</span><span>14,300</span></div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--accent); width:64%"></div></div>
-        </div>
-        <div class="channel-row">
-          <div class="channel-top"><span>Feb 2026</span><span>22,400</span></div>
-          <div class="channel-bar-wrap"><div class="channel-bar" style="background:var(--green); width:100%"></div></div>
-        </div>
-        <div style="font-size:12px; color:var(--green); margin-top:8px; font-weight:600;">+4.7x in 6 months. The trajectory is excellent — the problem is converting impressions to clicks.</div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- ========== SCHEMA TAB ========== -->
-  <div id="tab-schema" class="tab-content">
-
-    <div class="section-title">Schema & Structured Data — Score: 50/100</div>
-
-    <div class="grid-2" style="margin-bottom:16px;">
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--green)"></span>Schema Currently Implemented</div>
-        <ul class="check-list">
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>WebPage</strong><span>Present on all pages. Includes publication/modification dates, description, name fields.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>Organization</strong><span>Name, logo, URL present site-wide. Good foundation — but missing address, phone, email in schema (they're in footer but not marked up).</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>BreadcrumbList</strong><span>Implemented on all pages. Enables breadcrumb display in SERPs.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>WebSite with SearchAction</strong><span>Sitelinks search box schema present on homepage. Good for brand searches.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>ScholarlyArticle</strong><span>Applied to all articles. Includes datePublished, dateModified, wordCount, author fields.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-pass">✓</div>
-            <div class="check-text"><strong>ImageObject</strong><span>Featured images have ImageObject schema with dimensions. Missing alt/caption content however.</span></div>
-          </li>
+      <div class="md:col-span-2">
+        <p class="text-xs font-heading uppercase tracking-[0.15em] text-slate-300 font-semibold mb-4">Resources</p>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#" class="hover:text-white">Documentation</a></li>
+          <li><a href="#" class="hover:text-white">Methodology</a></li>
+          <li><a href="#faq" class="hover:text-white">FAQ</a></li>
+          <li><a href="#" class="hover:text-white">Status</a></li>
         </ul>
       </div>
 
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--red)"></span>Critical Schema Gaps</div>
-        <ul class="check-list">
-          <li class="check-item">
-            <div class="check-icon icon-fail">✕</div>
-            <div class="check-text"><strong>FAQPage schema — URGENT</strong><span>/time-and-materials-vs-fixed-fee/ has a FAQ section and ranks at position 2.7 for "t&m meaning". Adding FAQPage JSON-LD could trigger rich results and capture clicks immediately.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-fail">✕</div>
-            <div class="check-text"><strong>LocalBusiness schema</strong><span>Physical address (4920 Atlanta Hwy #344, Alpharetta, GA) and phone (404-987-2499) in footer but not in structured data. Add LocalBusiness schema to homepage.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-fail">✕</div>
-            <div class="check-text"><strong>Person schema not linked to articles</strong><span>ScholarlyArticle schema shows author "developer" — not linked to /ken-thomas/ or /ben-gandy/ Person pages. Fix: author.@id should point to the author's page URL.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>Event schema for Envision 2026</strong><span>/envision-2026/ page missing Event schema. Should include startDate, location, offers (price: $850), organizer.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>Review/AggregateRating schema</strong><span>Testimonials present on homepage but not marked up. Adding Review schema could unlock star ratings in SERPs.</span></div>
-          </li>
-          <li class="check-item">
-            <div class="check-icon icon-warn">!</div>
-            <div class="check-text"><strong>ProfessionalService schema</strong><span>More specific than Organization for a B2B consulting firm. Replace or extend Organization with ProfessionalService.</span></div>
-          </li>
+      <div class="md:col-span-3">
+        <p class="text-xs font-heading uppercase tracking-[0.15em] text-slate-300 font-semibold mb-4">Contact</p>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#contact" class="hover:text-white">Talk to sales</a></li>
+          <li><a href="#" class="hover:text-white">Book a walkthrough</a></li>
+          <li><a href="#" class="hover:text-white">Security &amp; compliance</a></li>
         </ul>
       </div>
     </div>
 
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--accent)"></span>FAQ Schema Template — T&M Page</div>
-        <p style="font-size:12px; color:var(--muted); margin-bottom:12px;">Add this JSON-LD to the /time-and-materials-vs-fixed-fee/ page &lt;head&gt; or before &lt;/body&gt;:</p>
-        <pre style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:14px; font-size:11px; color:#a8d9a8; overflow-x:auto; line-height:1.6;">{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "What does T&M mean?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "T&M stands for Time and Materials — a pricing model where the client is billed for actual labor hours and material costs incurred, rather than a fixed price agreed in advance."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What is the difference between time and materials vs fixed fee?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Time and materials pricing bills based on actual hours worked and materials used. Fixed fee (fixed price) sets a single price upfront regardless of actual costs. T&M offers flexibility; fixed fee provides budget certainty."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Which is better for landscaping: T&M or fixed price?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Fixed fee pricing is generally better for landscape maintenance contracts because it provides clients budget certainty and incentivizes your crew's efficiency. T&M can work for complex installation or enhancement projects where scope is unclear."
-      }
-    }
-  ]
-}</pre>
+    <div class="mt-12 pt-8 border-t border-white/5 flex flex-wrap gap-x-6 gap-y-3 items-center justify-between text-xs text-slate-500">
+      <div class="flex flex-wrap gap-x-4 gap-y-1">
+        <span>India data residency</span><span>·</span>
+        <span>DPDP compliant</span><span>·</span>
+        <span>RBI &amp; IRDAI-aligned</span><span>·</span>
+        <span>ISO-grade security</span><span>·</span>
+        <span>99.9% uptime SLA</span>
       </div>
-
-      <div class="card">
-        <div class="card-title"><span class="dot" style="background:var(--orange)"></span>LocalBusiness Schema Template</div>
-        <p style="font-size:12px; color:var(--muted); margin-bottom:12px;">Add to homepage to unlock local search visibility:</p>
-        <pre style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:14px; font-size:11px; color:#a8d9a8; overflow-x:auto; line-height:1.6;">{
-  "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  "name": "Envisor Consulting",
-  "url": "https://envisorco.com",
-  "logo": "https://envisorco.com/[logo-url]",
-  "telephone": "+1-404-987-2499",
-  "email": "info@envisorco.com",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "4920 Atlanta Hwy #344",
-    "addressLocality": "Alpharetta",
-    "addressRegion": "GA",
-    "postalCode": "30004",
-    "addressCountry": "US"
-  },
-  "foundingDate": "2011",
-  "memberOf": {
-    "@type": "Organization",
-    "name": "National Association of Landscape Professionals",
-    "url": "https://www.landscapeprofessionals.org"
-  },
-  "description": "Landscape business consulting firm helping companies grow, scale, and increase profitability using the Green Dot System.",
-  "areaServed": "United States",
-  "serviceType": "Business Consulting"
-}</pre>
-      </div>
+      <div>© 2026 Ori. All rights reserved.</div>
     </div>
-
   </div>
-
-  <!-- ========== ACTION PLAN TAB ========== -->
-  <div id="tab-action" class="tab-content">
-
-    <div class="section-title">Prioritized Action Plan</div>
-
-    <div class="grid-3" style="margin-bottom:16px;">
-      <div style="background:var(--red-bg); border:1px solid rgba(248,113,113,0.3); border-radius:10px; padding:14px; text-align:center;">
-        <div style="font-size:24px; font-weight:800; color:var(--red)">Priority 1</div>
-        <div style="font-size:13px; color:var(--red); margin-top:4px;">This Week — Fix The Foundation</div>
-        <div style="font-size:12px; color:var(--muted); margin-top:8px;">5 critical fixes. Zero content creation required.</div>
-      </div>
-      <div style="background:var(--orange-bg); border:1px solid rgba(251,146,60,0.3); border-radius:10px; padding:14px; text-align:center;">
-        <div style="font-size:24px; font-weight:800; color:var(--orange)">Priority 2</div>
-        <div style="font-size:13px; color:var(--orange); margin-top:4px;">This Month — Fix the CTR Crisis</div>
-        <div style="font-size:12px; color:var(--muted); margin-top:8px;">Title rewrites, schema additions, homepage UX.</div>
-      </div>
-      <div style="background:var(--green-bg); border:1px solid rgba(52,211,153,0.3); border-radius:10px; padding:14px; text-align:center;">
-        <div style="font-size:24px; font-weight:800; color:var(--green)">Priority 3</div>
-        <div style="font-size:13px; color:var(--green); margin-top:4px;">Next Quarter — Scale What Works</div>
-        <div style="font-size:12px; color:var(--muted); margin-top:8px;">Content expansion, channel development, rankings.</div>
-      </div>
-    </div>
-
-    <div class="timeline">
-
-      <div class="timeline-group">
-        <div class="timeline-header tg-red">🔴 Priority 1 — This Week (Zero Content Required)</div>
-        <div class="timeline-items">
-          <div class="timeline-item ti-red">
-            <h4>1. Set up GA4 bot traffic filter</h4>
-            <p>GA4 Admin → Data Filters → Create filter excluding China and Singapore. This reveals your true ~2,700 user baseline and makes all future data trustworthy. Without this, every decision is based on inflated numbers.</p>
-          </div>
-          <div class="timeline-item ti-red">
-            <h4>2. Mark key events in GA4</h4>
-            <p>GA4 Admin → Events → Mark as Key Event: form_submit, video_complete, click (on "Schedule a consultation" links). You have 50 form submissions and 58 video completions that are currently invisible as conversions.</p>
-          </div>
-          <div class="timeline-item ti-red">
-            <h4>3. Fix author attribution from "developer" to real names</h4>
-            <p>WordPress Admin → Posts → Edit each post → Change Author dropdown. Prioritize the top 10 GSC posts first. Update /ken-thomas/ and /ben-gandy/ author pages with full bios, credentials, years of experience, and NALP membership. This fixes E-E-A-T site-wide.</p>
-          </div>
-          <div class="timeline-item ti-red">
-            <h4>4. Add FAQ schema to /time-and-materials-vs-fixed-fee/</h4>
-            <p>"t&m meaning" ranks position 2.7 with 1,471 impressions and 0 clicks. Adding FAQPage JSON-LD (template provided in Schema tab) can trigger a rich snippet that captures 200–400 clicks/month with no ranking change required.</p>
-          </div>
-          <div class="timeline-item ti-red">
-            <h4>5. Fix robots.txt — remove sitemap.html reference</h4>
-            <p>Remove "Sitemap: https://envisorco.com/sitemap.html" from robots.txt. sitemap.html is a user-facing page, not an XML sitemap. This prevents crawler confusion. Keep only the sitemap.xml reference.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="timeline-group">
-        <div class="timeline-header tg-orange">🟡 Priority 2 — This Month (CTR Crisis Fix)</div>
-        <div class="timeline-items">
-          <div class="timeline-item ti-orange">
-            <h4>6. Rewrite title tags for top 10 GSC pages</h4>
-            <p>Start with the T&M page (42,689 impressions, 0.12% CTR) → "Time & Materials vs Fixed Fee: Complete Guide [2026]". Then the change management page → "Change Management Plan: 6 Steps That Actually Work". Full rewrite list provided in CTR tab. Estimated total impact: +1,000–1,400 additional clicks/month.</p>
-          </div>
-          <div class="timeline-item ti-orange">
-            <h4>7. Rewrite all meta descriptions for top 10 pages</h4>
-            <p>Current meta descriptions are generic. Rewrite to include: specific benefit/outcome, keyword variation, clear value proposition. 150–160 characters. The T&M page meta should mention "landscaping", "pros and cons", and a specific hook like "See the comparison chart".</p>
-          </div>
-          <div class="timeline-item ti-orange">
-            <h4>8. Add LocalBusiness schema to homepage</h4>
-            <p>Add ProfessionalService JSON-LD (template in Schema tab) with physical address, phone, founding year, NALP membership, and service area. This is required for local/maps visibility and reinforces NAP signals.</p>
-          </div>
-          <div class="timeline-item ti-orange">
-            <h4>9. Redesign homepage above-the-fold section</h4>
-            <p>Current H1 has zero SEO keywords and 5.6s avg engagement time. Rewrite H1 to: "Landscape Business Consulting That Drives Real Growth". Add 3 pathway cards below hero: "Our System →", "Client Results →", "Book a Consultation →". Add proof bar: "Founded 2011 · NALP Member · X Companies Transformed".</p>
-          </div>
-          <div class="timeline-item ti-orange">
-            <h4>10. Fix all image alt texts across top 10 pages</h4>
-            <p>T&M page featured image: alt="Time and materials vs fixed fee pricing comparison for landscape companies". About page team photos: alt="[Name], [Role] at Envisor Consulting". Homepage NALP logo: alt="NALP — National Association of Landscape Professionals member badge". Affects accessibility AND image search SEO.</p>
-          </div>
-          <div class="timeline-item ti-orange">
-            <h4>11. Add Event schema to /envision-2026/</h4>
-            <p>Add Event JSON-LD with name, startDate, location (address), offers (@type: Offer, price: 850, priceCurrency: USD), organizer. Early bird pricing ($850 through April 17) should be in the offers array. This enables rich event results in SERPs.</p>
-          </div>
-          <div class="timeline-item ti-orange">
-            <h4>12. Add Open Graph meta tags site-wide</h4>
-            <p>If not already present, add og:title, og:description, og:image, og:type, og:url to all pages. This controls how pages appear when shared on LinkedIn, Facebook, and in Slack. Especially important for the high-value /consult/ and /green-dot-system/ pages.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="timeline-group">
-        <div class="timeline-header tg-green">🟢 Priority 3 — Next Quarter (Scale What Works)</div>
-        <div class="timeline-items">
-          <div class="timeline-item ti-green">
-            <h4>13. Expand T&M content hub — 3 new sub-pages</h4>
-            <p>The T&M topic cluster has ~50,000 impressions/6mo. Create: (a) /t-m-meaning/ — "What Does T&M Mean? Definition & Examples" targeting "t&m meaning" [position 2.7], (b) /time-and-material-pricing/ — targeting "time and material pricing" [687 impressions, pos 6.2], (c) /t-m-vs-fixed-price-comparison/ — targeting "t&m vs fixed price" [2,012 impressions]. Each 1,500–2,000 words with landscape-specific examples. Interlink all 4 T&M pages.</p>
-          </div>
-          <div class="timeline-item ti-green">
-            <h4>14. Rebuild change management page to 3,000+ words</h4>
-            <p>Currently position 31 with 13,588 impressions. The query "change management plan" has high commercial intent. Expand from 1,213 → 3,000+ words. Add: downloadable change management plan template, landscape industry case study, FAQ section (10+ questions), comparison table, internal links to /consult/. Target: position 5–10 within 60–90 days.</p>
-          </div>
-          <div class="timeline-item ti-green">
-            <h4>15. Build out author bio pages for all 6 consultants</h4>
-            <p>Each author page (/ken-thomas/, /ben-gandy/, /brian-shelah/, /timothy-mccolgan/, /steve-krumnaker/, /steven-bruce/) should include: headshot with proper alt text, full credentials and certifications, years of industry experience, specific areas of expertise, a link to all articles they've authored, LinkedIn URL, Person schema with @type: Person, jobTitle, knowsAbout, worksFor.</p>
-          </div>
-          <div class="timeline-item ti-green">
-            <h4>16. Invest in email campaigns — 2nd most reliable channel</h4>
-            <p>Email delivers 44.4% engagement rate with 365 sessions. This is your 2nd highest-quality traffic source. Increase send frequency, segment by industry vertical (residential vs commercial landscape), and drive traffic specifically to the T&M hub and new content pieces. A/B test subject lines around "pricing" and "profitability" topics.</p>
-          </div>
-          <div class="timeline-item ti-green">
-            <h4>17. Build referral partnerships with landscape industry resources</h4>
-            <p>Referral delivers 59.6% engagement rate — nearly as good as organic. Identify: NALP partner publications, landscape industry trade press, landscape supplier blogs, regional landscape associations. Offer guest posts, co-branded webinars, or resource exchanges. Each referral link is also a backlink that boosts domain authority.</p>
-          </div>
-          <div class="timeline-item ti-green">
-            <h4>18. Launch programmatic content series: case study library</h4>
-            <p>3 case studies exist (Mulhall's, Mullin, Greenscape) but are thin. Expand each to 800–1,200 words with: before/after metrics, services used, timeline, client testimonial quote, results by the numbers. Add CaseStudy schema. Create a hub page /case-studies/ targeting "landscape business consulting results". These pages support bottom-of-funnel conversion.</p>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Summary ROI table -->
-    <div class="card" style="margin-top:16px;">
-      <div class="card-title"><span class="dot" style="background:var(--green)"></span>Expected Outcomes by Priority Group</div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Priority</th><th>Actions</th><th>Effort</th><th>Timeline</th><th>Expected Traffic Impact</th><th>Expected Business Impact</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><span class="metric-badge bad">Priority 1</span></td>
-              <td>Bot filter, conversions, author fix, FAQ schema, robots.txt</td>
-              <td>~4–6 hours</td>
-              <td>This week</td>
-              <td style="color:var(--yellow)">+200–400 clicks/mo (FAQ schema)</td>
-              <td>Accurate data, E-E-A-T fix, first rich snippets</td>
-            </tr>
-            <tr>
-              <td><span class="metric-badge warn">Priority 2</span></td>
-              <td>Title rewrites, meta rewrites, LocalBusiness schema, homepage UX, alt texts</td>
-              <td>~10–15 hours</td>
-              <td>30 days</td>
-              <td style="color:var(--yellow)">+800–1,200 clicks/mo</td>
-              <td>152% traffic increase, cleaner brand signals, event visibility</td>
-            </tr>
-            <tr>
-              <td><span class="metric-badge ok">Priority 3</span></td>
-              <td>T&M hub, change mgmt expansion, author pages, email, referrals, case studies</td>
-              <td>~40–60 hours</td>
-              <td>90 days</td>
-              <td style="color:var(--green)">+2,000–4,000 clicks/mo</td>
-              <td>Sustained organic growth, lead gen from new content, domain authority</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-  </div>
-
-</div>
-
-<div class="footer">
-  Envisor SEO Dashboard · Generated March 21, 2026 · Data: GA4 Sep 2025 – Mar 2026 + Live Crawl + Google Search Console
-</div>
-
-<script>
-  function showTab(name) {
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-    document.getElementById('tab-' + name).classList.add('active');
-    event.target.classList.add('active');
-  }
-
-  // Animate score ring on load
-  window.addEventListener('load', () => {
-    const score = 47;
-    const circumference = 283;
-    const offset = circumference - (circumference * score / 100);
-    const ring = document.getElementById('mainRing');
-    if (ring) {
-      ring.style.strokeDashoffset = offset;
-      // Color based on score
-      if (score >= 70) ring.style.stroke = '#34d399';
-      else if (score >= 50) ring.style.stroke = '#fbbf24';
-      else ring.style.stroke = '#fb923c';
-    }
-  });
-</script>
+</footer>
 
 </body>
 </html>
